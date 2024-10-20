@@ -1,10 +1,8 @@
 # Las imágenes fueron conseguidas desde https://github.com/DevinLeamy/Pacman
 
-from pacman.main.py.logic.AtajoLaberinto import AtajoLaberinto
 from pacman.main.py.logic.Fruta import Fruta
 from pacman.main.py.logic.Pacdot import Pacdot
 from pacman.main.py.logic.Pacman import Pacman
-from pacman.main.py.logic.PildoraPoder import PildoraPoder
 from pacman.main.py.logic.SistemaHashing import SistemaHashing
 
 
@@ -26,6 +24,7 @@ def main():
 
   # Imprimir todos los elementos en el sistema de hashing
     sistema_hashing.imprimir_elementos()
+
 
 if __name__ == "__main__":
     main()

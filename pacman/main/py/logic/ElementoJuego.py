@@ -38,3 +38,5 @@ class ElementoJuego(ABC):
     def colisionar(self , Pacman):
         """Método booleano que devuelve True si hay colisión, False en caso contrario."""
         pass
+
+
