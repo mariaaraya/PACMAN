@@ -1,10 +1,13 @@
 # Las imágenes fueron conseguidas desde https://github.com/DevinLeamy/Pacman
+import pygame
 
 from pacman.main.py.logic.Fruta import Fruta
 from pacman.main.py.logic.Pacdot import Pacdot
 from pacman.main.py.logic.Pacman import Pacman
 from pacman.main.py.logic.SistemaHashing import SistemaHashing
-
+from pacman.main.py.presentation.Controller import Controller
+from pacman.main.py.presentation.Model import Model
+from pacman.main.py.presentation.View import View
 
 def main():
     fruta = Fruta(posicion=(1, 1),  nombre="Manzana", duracion=10)
@@ -25,6 +28,30 @@ def main():
   # Imprimir todos los elementos en el sistema de hashing
     sistema_hashing.imprimir_elementos()
 
+    # Inicializar el modelo
+
+
+    model = Model()
+
+    # Inicializar la vista
+    view = View()
+
+    # Inicializar el controlador con el modelo y la vista
+    controller = Controller(model, view)
+
+    # Asignar el modelo y el controlador a la vista
+    view.set_Model(model)
+    view.set_Controller(controller)
+
+    # Puedes agregar algunos elementos iniciales si lo deseas
+    view.agregar_elementos_pacdot()  # Agregar pacdots en toda la ventana
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            controller.handle_event(event)
+        model.update()
+        view.draw()
 
 if __name__ == "__main__":
     main()
