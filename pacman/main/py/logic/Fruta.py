@@ -1,5 +1,4 @@
-from ElementoJuego import ElementoJuego
-#from pacman.main.py.logic.ElementoJuego import ElementoJuego
+from .ElementoJuego import ElementoJuego
 
 
 class Fruta(ElementoJuego):
