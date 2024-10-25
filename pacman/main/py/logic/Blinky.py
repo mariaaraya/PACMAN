@@ -1,6 +1,5 @@
 from pacman.main.py.logic.Fantasma import Fantasma
 
-
 class Blinky(Fantasma):
     def __init__(self, posicion_inicial, velocidad = 1):
         super().__init__("rojo",posicion_inicial, velocidad)

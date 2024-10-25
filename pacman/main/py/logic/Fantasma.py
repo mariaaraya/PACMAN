@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 
-
 class Fantasma (ABC):
     MODO_PERSECUCION = "persecucion"
     MODO_DISPERSION = "dispersión"
