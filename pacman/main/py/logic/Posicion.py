@@ -1,4 +1,3 @@
-import pygame
 
 class Posicion:
     def __init__(self, x=0, y=0, direccion="derecha", velocidad=1):

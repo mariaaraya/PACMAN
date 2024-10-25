@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 import pygame
 import os
-#ElementPath = "../pacman/main/py/resorces/ElementImages/"
-ElementPath = os.path.abspath(os.path.dirname(__file__), '..', 'resorces', 'ElementImages')
+ElementPath = "pacman/main/resorces/ElementImages/"
+#ElementPath = os.path.abspath(os.path.dirname(__file__), '..', 'resorces', 'ElementImages')
 
 # Clase abstracta
 class ElementoJuego(ABC):
@@ -38,9 +38,9 @@ class ElementoJuego(ABC):
     def set_duracion(self, duracion):
         self.duracion = duracion
 
-    #def draw(self, screen):
-     #   ruta_imagen = self.obtener_ruta_imagen()  # Obtener la ruta de la imagen
-      #  image = pygame.image.load(ruta_imagen)  # Cargar la imagen usando la ruta
+       #def draw(self, screen):
+       #   ruta_imagen = self.obtener_ruta_imagen()  # Obtener la ruta de la imagen
+       #  image = pygame.image.load(ruta_imagen)  # Cargar la imagen usando la ruta
        # screen.blit(image, self.posicion)  # Dibujar la imagen en la posición especificada
 
     def draw(self, screen):
