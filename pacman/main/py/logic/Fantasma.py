@@ -12,6 +12,7 @@ class Fantasma (ABC):
         self.objetivo = None
         self.modo = self.MODO_PERSECUCION
         self.square_size = square
+        self.changeFeetCount = 0
 
     @abstractmethod
     def mover_hacia_objetivo(self, pacman_posicion):

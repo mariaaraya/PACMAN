@@ -1,12 +1,13 @@
 import os
 
 import pygame
-
+from pacman.main.py.logic.Pacman import Pacman
 from pacman.main.py.logic.Clyde import Clyde
 from pacman.main.py.logic.Inky import Inky
 from pacman.main.py.logic.Pacdot import Pacdot
 from pacman.main.py.logic.PildoraPoder import PildoraPoder
 from pacman.main.py.logic.Pinky import Pinky
+from pacman.main.py.logic.Posicion import Posicion
 from pacman.main.py.logic.SistemaHashing import SistemaHashing
 from pacman.main.py.logic.Blinky import Blinky
 # Obtener la ruta absoluta del directorio raíz del proyecto (subiendo más niveles)
@@ -60,10 +61,11 @@ class Laberinto:
         self.height = len(self.laberinto) * self.square_size
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.elementos= SistemaHashing()
-        self.blinky = Blinky([10, 10], self.square_size)
+        self.blinky = Blinky([11, 12], self.square_size)
         self.clycde = Clyde([11, 11], self.square_size)
         self.inky = Inky([12, 12], self.square_size, self.blinky)
         self.pinky = Pinky([13, 13], self.square_size)
+        self.pacman = Pacman(1, Posicion(14, 20), 0, self.square_size)
 
     def agregar_elementos(self):
         """Agrega los Pacdots, Pildoras de Poder al sistema basado en el laberinto. Los fantasmas se crean directamente."""
@@ -142,6 +144,9 @@ class Laberinto:
         # Dibujar los fantasmas
         for fantasma in self.fantasmas:
             fantasma.draw(self.screen)
+        # Dibujar Pac-Man
+        self.pacman.draw(self.screen)
+
 
     def run(self):
         pygame.init()
