@@ -18,6 +18,6 @@ class Pacdot(ElementoJuego):
         # Define el color del Pacdot (por ejemplo, amarillo)
         color = (255, 255, 0)  # Color amarillo
         # Tamaño del Pacdot (radio del círculo)
-        radio = 5  # Ajusta el tamaño
+        radio = 4 # Ajusta el tamaño
         # Dibuja un círculo en la pantalla en la posición del Pacdot
         pygame.draw.circle(screen, color, self.posicion, radio)

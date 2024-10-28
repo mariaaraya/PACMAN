@@ -56,7 +56,7 @@ class Laberinto:
             [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
             [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
         ]
-        self.square_size = 25  # Tamaño de cada celda en píxeles
+        self.square_size = 20  # Tamaño de cada celda en píxeles
         self.width = len(self.laberinto[0]) * self.square_size
         self.height = len(self.laberinto) * self.square_size
         self.screen = pygame.display.set_mode((self.width, self.height))
