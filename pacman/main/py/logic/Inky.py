@@ -67,6 +67,6 @@ class Inky(Fantasma):
         ghostImage = pygame.transform.scale(ghostImage, (int(self.square_size * 0.9), int(self.square_size * 0.9)))
 
         # Dibujar la imagen en la posición actual de Blinky
-        screen.blit(ghostImage, (self.posicion_inicial[0] * self.square_size,
-                                 self.posicion_inicial[1] * self.square_size))
+        screen.blit(ghostImage, (self.posicion_inicial.get_x() * self.square_size,
+                                 self.posicion_inicial.get_y() * self.square_size))
 

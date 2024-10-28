@@ -9,10 +9,10 @@ BoardPath = os.path.join(current_dir, "resorces", "ElementImages")
 # Esto se podría agregar al ciclo principal del juego
 
 
-MODO_PERSECUCION = "persecucion"
+MODO_PERSECUCION = "persecucion" # Para cuandso se pued apcomer la fantsma
 MODO_NORMAL = "normal"
 class Pacman:
-    def __init__(self, velocidad, posicion, punto, square_size):
+    def __init__(self, velocidad, posicion, punto, square_size, laberinto):
         self.velocidad = velocidad
         self.vidas = 3
         self.posicion = posicion  # Debe ser un objeto de la clase Posicion
@@ -20,6 +20,10 @@ class Pacman:
         self.modo = MODO_NORMAL
         self.changeFeetCount = 0  # Contador para alternar imágenes
         self.square_size = square_size  # Tamaño del sprite
+        self.laberinto = laberinto  # Referencia al laberinto
+        self.colision_desactivada = False  # Nueva bandera para desactivar la colisión temporalmente
+        self.ultimo_teletransporte = 0  # Guardar el tiempo del último teletransporte
+
     # Getters
     def get_posicion(self):
         return self.posicion
@@ -55,24 +59,51 @@ class Pacman:
     def colision(self , punto):
         self.punto+= punto
 
-    def colision_atajo(self , posicion):
-       self.posicion= posicion
+    def colision_atajo(self, nueva_posicion):
+        """Teletransporta a Pac-Man a la nueva posición del atajo."""
+        self.posicion.set_x(nueva_posicion.get_x())
+        self.posicion.set_y(nueva_posicion.get_y())
+        self.posicion.set_direccion("derecha")  # Ajusta la dirección si es necesario
+        self.colision_desactivada = True  # Desactivar colisiones temporalmente
+        self.tiempo_colision_desactivada = pygame.time.get_ticks()  # Guardar el tiempo actual
 
     def colision_pildora(self, duracion):
         self.set_modo(MODO_PERSECUCION)
         timer = threading.Timer(duracion, self.set_modo, [MODO_NORMAL])
         timer.start()
 
-    def mover(self, direccion):
-        self.posicion.set_direccion(direccion)
+    def mover(self, direccion, delta_time):
+        """Mueve a Pac-Man en la dirección dada, teniendo en cuenta su velocidad y el tiempo transcurrido."""
+
+        # Obtener la posición actual de Pac-Man
+        x_actual = self.posicion.get_x()
+        y_actual = self.posicion.get_y()
+
+        # Crear variables para la nueva posición
+        nuevo_x = x_actual
+        nuevo_y = y_actual
+
+        # Ajustar la cantidad de movimiento basado en la velocidad y el tiempo delta
+        movimiento = self.velocidad * delta_time
+
+        # Cambiar la nueva posición según la dirección
         if direccion == "derecha":
-            self.posicion.set_x(self.posicion.get_x() + self.velocidad)
+            nuevo_x += movimiento
         elif direccion == "izquierda":
-            self.posicion.set_x(self.posicion.get_x() - self.velocidad)
+            nuevo_x -= movimiento
         elif direccion == "arriba":
-            self.posicion.set_y(self.posicion.get_y() - self.velocidad)
+            nuevo_y -= movimiento
         elif direccion == "abajo":
-            self.posicion.set_y(self.posicion.get_y() + self.velocidad)
+            nuevo_y += movimiento
+
+        # Verificar si la nueva posición está dentro de los límites y es válida
+        if 0 <= nuevo_y < len(self.laberinto) and 0 <= nuevo_x < len(self.laberinto[0]):
+            if self.laberinto[int(nuevo_y)][int(nuevo_x)] not in [3, 4]:  # No moverse a paredes
+                # Actualizar la posición de Pac-Man en la cuadrícula
+                self.posicion.set_x(nuevo_x)
+                self.posicion.set_y(nuevo_y)
+                # Actualizar la dirección actual de Pac-Man
+                self.posicion.set_direccion(direccion)
 
     def draw(self, screen):
         # Obtener la dirección actual
@@ -81,13 +112,13 @@ class Pacman:
         # Elegir la imagen de Pac-Man en función de la dirección
         if direccion == "izquierda":
             image_frame_1 = "tile048.png"
-            image_frame_2 = "tile059.png"
+            image_frame_2 = "tile050.png"
         elif direccion == "derecha":
             image_frame_1 = "tile052.png"
             image_frame_2 = "tile054.png"
         elif direccion == "arriba":
             image_frame_1 = "tile051.png"
-            image_frame_2 = "tile050.png"  # Puedes ajustar el segundo frame si es diferente
+            image_frame_2 = "tile049.png"
         elif direccion == "abajo":
             image_frame_1 = "tile053.png"
             image_frame_2 = "tile055.png"

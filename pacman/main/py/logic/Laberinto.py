@@ -1,6 +1,9 @@
 import os
-
+import copy
 import pygame
+import random
+from pacman.main.py.logic.AtajoLaberinto import AtajoLaberinto
+from pacman.main.py.logic.Fruta import Fruta
 from pacman.main.py.logic.Pacman import Pacman
 from pacman.main.py.logic.Clyde import Clyde
 from pacman.main.py.logic.Inky import Inky
@@ -61,11 +64,76 @@ class Laberinto:
         self.height = len(self.laberinto) * self.square_size
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.elementos= SistemaHashing()
-        self.blinky = Blinky([11, 12], self.square_size)
-        self.clycde = Clyde([11, 11], self.square_size)
-        self.inky = Inky([12, 12], self.square_size, self.blinky)
-        self.pinky = Pinky([13, 13], self.square_size)
-        self.pacman = Pacman(1, Posicion(14, 20), 0, self.square_size)
+        self.blinky = Blinky(Posicion(11, 12), self.square_size)
+        self.clyde = Clyde(Posicion(11, 11), self.square_size)
+        self.inky = Inky(Posicion(12, 12), self.square_size, self.blinky)
+        self.pinky = Pinky(Posicion(13, 13), self.square_size)
+        self.pacman = Pacman(10, Posicion(14, 26), 0, self.square_size, self.laberinto)
+        self.nivel = 1  # Nivel actual del juego
+        self.max_nivel = 5  # Número máximo de niveles
+        self.laberinto_original = copy.deepcopy(self.laberinto)
+
+    def crear_fruta_segun_nivel(self, nivel, posicion_fruta):
+        # Definir la fruta y los puntos según el nivel
+        if nivel == 1:
+            nombre_fruta = "Cereza"
+            puntos_fruta = 100
+        elif nivel == 2:
+            nombre_fruta = "Fresa"
+            puntos_fruta = 300
+        elif nivel in [3, 4]:
+            nombre_fruta = "Naranja"
+            puntos_fruta = 500
+        elif nivel in [5, 6]:
+            nombre_fruta = "Manzana"
+            puntos_fruta = 700
+        elif nivel >= 7:
+            nombre_fruta = "Uvas"
+            puntos_fruta = 1000
+        else:
+            nombre_fruta = "Cereza"  # Por defecto
+            puntos_fruta = 100
+
+        # Crear el objeto Fruta pasando el square_size
+        fruta = Fruta(Posicion(posicion_fruta[0], posicion_fruta[1]), nombre_fruta, 15, puntos_fruta, self.square_size)
+        # Actualizar la matriz en la posición donde se coloca la fruta
+        self.laberinto[posicion_fruta[1]][posicion_fruta[0]] = 2  # Cambia el valor de la celda a 2
+        return fruta
+
+    def generar_posicion_fruta(self):
+        posiciones_validas = []
+        for row in range(len(self.laberinto)):
+            for col in range(len(self.laberinto[row])):
+                if self.laberinto[row][col] == 1:  # Solo posiciones con valor 1
+                    posiciones_validas.append((col, row))
+
+        if posiciones_validas:
+            return random.choice(posiciones_validas)  # Devolver una posición aleatoria
+        return None
+
+    def reiniciar_laberinto(self):
+        """Reinicia el laberinto para el siguiente nivel."""
+        self.laberinto = copy.deepcopy(self.laberinto_original)  # Reiniciar el laberinto con una copia profunda
+        self.agregar_elementos()  # Reagregar los elementos del laberinto
+
+    def verificar_nivel_completado(self):
+        """Verifica si todos los elementos 2 y 6 han sido recolectados."""
+        for fila in self.laberinto:
+            for celda in fila:
+                if celda == 2 or celda == 6:  # Aún quedan elementos por recolectar
+                    return False
+        return True  # No quedan más elementos
+
+    def avanzar_nivel(self):
+        """Avanza al siguiente nivel si es posible."""
+        if self.nivel < self.max_nivel:
+            self.nivel += 1
+            print(f"¡Nivel completado! Ahora en el nivel {self.nivel}")
+            self.reiniciar_laberinto()  # Reiniciar el laberinto para el siguiente nivel
+        else:
+            print("¡Has completado todos los niveles! Fin del juego.")
+            pygame.quit()
+            exit()  # Cerrar completamente el juego al terminar todos los niveles
 
     def agregar_elementos(self):
         """Agrega los Pacdots, Pildoras de Poder al sistema basado en el laberinto. Los fantasmas se crean directamente."""
@@ -81,28 +149,35 @@ class Laberinto:
             for col in range(len(self.laberinto[row])):
                 cell_value = self.laberinto[row][col]
                 x = col * self.square_size + self.square_size // 2  # Centrar los objetos en la celda
-                y = row * self.square_size + self.square_size // 2
 
+                y = row * self.square_size + self.square_size // 2
+                if cell_value == 1:  # Atajos
+                    if col == 0:  # Es el atajo de la izquierda
+                        atajo_izquierdo = AtajoLaberinto(Posicion(0, 17), "Atajo Izquierdo")
+                        self.elementos.agregar_elemento(atajo_izquierdo)
+                    elif col == 27:  # Es el atajo de la derecha
+                        atajo_derecho = AtajoLaberinto(Posicion(27, 17), "Atajo Derecho")
+                        self.elementos.agregar_elemento(atajo_derecho)
                 if cell_value == 2:  # Pacdot (camino)
-                    pacdot = Pacdot((x, y), 'Pacdot')
+                    pacdot = Pacdot(Posicion(x, y), 'Pacdot')
                     self.elementos.agregar_elemento(pacdot)
                 elif cell_value == 6:  # Pildora de Poder (especial)
-                    pildora_poder = PildoraPoder((x, y), 'PildoraPoder', 10)
+                    pildora_poder = PildoraPoder(Posicion(x, y), 'PildoraPoder', 10)
                     self.elementos.agregar_elemento(pildora_poder)
                 elif cell_value == 4:  # Fantasmas
                     # Agregar cada fantasma solo si no ha sido agregado ya
                     if not blinky_added:
-                        self.fantasmas.append(Blinky([col, row], self.square_size))
+                        self.fantasmas.append(Blinky(Posicion(col, row), self.square_size))
                         blinky_added = True
                     elif not clyde_added:
-                        self.fantasmas.append(Clyde([col, row], self.square_size))
+                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size))
                         clyde_added = True
                     elif not inky_added:
                         self.fantasmas.append(
-                            Inky([col, row], self.square_size, self.blinky))  # Pasamos referencia a Blinky si necesario
+                            Inky(Posicion(col, row), self.square_size, self.blinky))  # Pasamos referencia a Blinky si necesario
                         inky_added = True
                     elif not pinky_added:
-                        self.fantasmas.append(Pinky([col, row], self.square_size))
+                        self.fantasmas.append(Pinky(Posicion(col, row), self.square_size))
                         pinky_added = True
 
     def draw(self):
@@ -139,29 +214,68 @@ class Laberinto:
                 currentTile += 1  # Incrementar el número de la casilla
 
         # Dibujar todos los elementos del sistema de hashing
+
         for elemento in self.elementos.obtener_todos_los_elementos():
             elemento.draw(self.screen)
+
         # Dibujar los fantasmas
         for fantasma in self.fantasmas:
             fantasma.draw(self.screen)
         # Dibujar Pac-Man
         self.pacman.draw(self.screen)
 
+    def actualizar_matriz(self, posicion):
+        """Actualiza la matriz para indicar que la posición dada está vacía (1)."""
+        # Convertir la posición a las coordenadas de la matriz
+        x = posicion.get_x() // self.square_size
+        y = posicion.get_y() // self.square_size
+        # Cambiar el valor de la matriz a 1
+        self.laberinto[y][x] = 1
 
     def run(self):
         pygame.init()
         clock = pygame.time.Clock()
-        self.agregar_elementos()  # Agregar los elementos una vez al iniciar
+        self.agregar_elementos()  # Agregar los elementos al iniciar
         running = True
+        direccion_actual = None  # Variable para almacenar la dirección actual
+        fruta_creada = False  # Controlar si ya se creó una fruta en este nivel
+
+        # Configurar el temporizador para crear la fruta después de 5 segundos
+        pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
+
         while running:
+            delta_time = clock.tick(40) / 1000.0  # Tiempo en segundos
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RIGHT:
+                        direccion_actual = "derecha"
+                    elif event.key == pygame.K_LEFT:
+                        direccion_actual = "izquierda"
+                    elif event.key == pygame.K_UP:
+                        direccion_actual = "arriba"
+                    elif event.key == pygame.K_DOWN:
+                        direccion_actual = "abajo"
+                # Evento personalizado para crear la fruta
+                if event.type == pygame.USEREVENT + 1 and not fruta_creada:
+                    posicion_fruta = self.generar_posicion_fruta()
+                    if posicion_fruta:
+                        # Crear una fruta basada en el nivel actual y actualizar la matriz
+                        fruta = self.crear_fruta_segun_nivel(self.nivel, posicion_fruta)
+                        self.elementos.agregar_elemento(fruta)  # Agregar la fruta al SistemaHashing
+                        fruta_creada = True  # Marcar que ya se creó la fruta en este nivel
+                        print(f"Fruta creada en la posición {posicion_fruta}")
+
+            if direccion_actual:
+                self.pacman.mover(direccion_actual, delta_time)
+
+            self.elementos.verificar_colisiones(self.pacman, self)
 
             self.screen.fill((0, 0, 0))  # Limpiar pantalla
             self.draw()  # Dibujar el laberinto y los elementos
             pygame.display.update()  # Actualizar la pantalla
 
-            clock.tick(60)
-        pygame.quit()
+
 

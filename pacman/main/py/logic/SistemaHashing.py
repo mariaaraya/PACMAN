@@ -1,4 +1,8 @@
 
+from pacman.main.py.logic.AtajoLaberinto import AtajoLaberinto
+from pacman.main.py.logic.Fruta import Fruta
+
+
 class SistemaHashing:
     def __init__(self):
         self.elementos = {}
@@ -13,15 +17,48 @@ class SistemaHashing:
         if key in self.elementos:
             del self.elementos[key]
 
-    def verificar_colisiones(self, pacman):
-        """Verifica colisiones y elimina elementos que no sean 'atajos'."""
-        colisiones = []
-        for key, elemento in self.elementos.items():
-            if elemento.colisionar(pacman):
-                colisiones.append(key)
-        for key in colisiones:
-            if key != "atajos":  # Verifica que el elemento no se llame 'atajos'
-                self.eliminar_elemento(key)
+        # Recorremos todos los elementos y verificamos si están cerca de Pac-Man
+
+    def verificar_colisiones(self, pacman, laberinto):
+        """
+        Verifica si Pac-Man colisiona con algún elemento en su posición actual.
+        Si hay colisión, realiza la acción correspondiente y elimina el elemento.
+        """
+        # Convertimos la posición de Pac-Man a píxeles
+        pacman_x = pacman.get_posicion().get_x() * pacman.square_size
+        pacman_y = pacman.get_posicion().get_y() * pacman.square_size
+        for key, elemento in list(self.elementos.items()):
+            # Verificar si el elemento es un AtajoLaberinto
+            if isinstance(elemento, (AtajoLaberinto, Fruta)):
+                # En este caso, no usamos píxeles sino las posiciones de la cuadrícula
+                if elemento.colisionar(pacman):  # Comparar directamente posiciones de la cuadrícula
+                    print(f"Colisión detectada con atajo {elemento.get_nombre()} en la posición {key}.")
+                    if isinstance(elemento, Fruta):
+                        self.eliminar_elemento(key)
+                        laberinto.actualizar_matriz(elemento.get_posicion())
+                    # No eliminamos los atajos
+                    continue
+            else:
+                # Para los demás elementos, comparamos en píxeles
+                objeto_x = elemento.get_posicion().get_x()
+                objeto_y = elemento.get_posicion().get_y()
+
+                # Ajustar la tolerancia de colisión
+                tolerancia_colision = 11  # Ajustar según el tamaño del sprite
+
+                # Verificar si las coordenadas de Pac-Man y el objeto están dentro de la tolerancia
+                if abs(pacman_x - objeto_x) < tolerancia_colision and abs(pacman_y - objeto_y) < tolerancia_colision:
+                    # Si hay colisión, realiza la acción correspondiente
+                    if elemento.colisionar(pacman):
+                        print(f"Colisión detectada con {elemento.get_nombre()} en la posición {key}.")
+                        # Si el elemento no es un atajo, eliminarlo después de la colisión
+                        self.eliminar_elemento(key)
+                        laberinto.actualizar_matriz(elemento.get_posicion())
+
+
+    def obtener_elemento(self, key):
+        """Obtiene un elemento específico por su clave (posición)."""
+        return self.elementos.get(key, None)
 
     def obtener_elemento(self, key):
         return self.elementos.get(key, None)
