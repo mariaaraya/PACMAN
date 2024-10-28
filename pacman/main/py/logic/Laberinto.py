@@ -2,16 +2,19 @@ import os
 
 import pygame
 
+from pacman.main.py.logic.Clyde import Clyde
+from pacman.main.py.logic.Inky import Inky
 from pacman.main.py.logic.Pacdot import Pacdot
 from pacman.main.py.logic.PildoraPoder import PildoraPoder
+from pacman.main.py.logic.Pinky import Pinky
 from pacman.main.py.logic.SistemaHashing import SistemaHashing
-
+from pacman.main.py.logic.Blinky import Blinky
 # Obtener la ruta absoluta del directorio raíz del proyecto (subiendo más niveles)
 current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Construir la ruta correcta hacia las imágenes
 BoardPath = os.path.join(current_dir, "resorces", "BoardImages")
-print(f"Ruta BoardPath: {BoardPath}")
+
 class Laberinto:
     def __init__(self):
         self.laberinto = [
@@ -57,9 +60,21 @@ class Laberinto:
         self.height = len(self.laberinto) * self.square_size
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.elementos= SistemaHashing()
+        self.blinky = Blinky([10, 10], self.square_size)
+        self.clycde = Clyde([11, 11], self.square_size)
+        self.inky = Inky([12, 12], self.square_size, self.blinky)
+        self.pinky = Pinky([13, 13], self.square_size)
 
     def agregar_elementos(self):
-        """Agrega los Pacdots y Pildoras de Poder al sistema basado en el laberinto"""
+        """Agrega los Pacdots, Pildoras de Poder al sistema basado en el laberinto. Los fantasmas se crean directamente."""
+        # Inicializamos las variables que controlan si los fantasmas ya han sido agregados
+        blinky_added = False
+        clyde_added = False
+        inky_added = False
+        pinky_added = False
+
+        self.fantasmas = []  # Lista para almacenar los fantasmas
+
         for row in range(len(self.laberinto)):
             for col in range(len(self.laberinto[row])):
                 cell_value = self.laberinto[row][col]
@@ -72,6 +87,21 @@ class Laberinto:
                 elif cell_value == 6:  # Pildora de Poder (especial)
                     pildora_poder = PildoraPoder((x, y), 'PildoraPoder', 10)
                     self.elementos.agregar_elemento(pildora_poder)
+                elif cell_value == 4:  # Fantasmas
+                    # Agregar cada fantasma solo si no ha sido agregado ya
+                    if not blinky_added:
+                        self.fantasmas.append(Blinky([col, row], self.square_size))
+                        blinky_added = True
+                    elif not clyde_added:
+                        self.fantasmas.append(Clyde([col, row], self.square_size))
+                        clyde_added = True
+                    elif not inky_added:
+                        self.fantasmas.append(
+                            Inky([col, row], self.square_size, self.blinky))  # Pasamos referencia a Blinky si necesario
+                        inky_added = True
+                    elif not pinky_added:
+                        self.fantasmas.append(Pinky([col, row], self.square_size))
+                        pinky_added = True
 
     def draw(self):
         # Colores para los diferentes elementos del laberinto
@@ -94,7 +124,6 @@ class Laberinto:
 
                     imageName = "tile" + imageName + ".png"
                     tileImagePath = os.path.join(BoardPath, imageName)
-
                     try:
                         # Intentar cargar la imagen de la pared
                         tileImage = pygame.image.load(tileImagePath)
@@ -110,6 +139,9 @@ class Laberinto:
         # Dibujar todos los elementos del sistema de hashing
         for elemento in self.elementos.obtener_todos_los_elementos():
             elemento.draw(self.screen)
+        # Dibujar los fantasmas
+        for fantasma in self.fantasmas:
+            fantasma.draw(self.screen)
 
     def run(self):
         pygame.init()

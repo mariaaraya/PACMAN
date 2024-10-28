@@ -1,5 +1,10 @@
+import os
 from .ElementoJuego import ElementoJuego
-import pygame
+
+# Obtener la ruta absoluta del directorio raíz del proyecto (subiendo más niveles)
+current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Construir la ruta correcta hacia las imágenes
+BoardPath = os.path.join(current_dir, "resorces", "ElementImages")
 
 class Fruta(ElementoJuego):
     def __init__(self, posicion, nombre, duracion, punto ):
@@ -13,13 +18,6 @@ class Fruta(ElementoJuego):
         return False
 
 
-    def draw(self, screen):
-        """Método  para dibijar el elemento."""
-        pass
-
-    def obtener_ruta_imagen(self):
-        """Método  para obtener la ruta de la imagen."""
-        pass
 
 
     """Cereza: 100 puntos (Nivel 1)

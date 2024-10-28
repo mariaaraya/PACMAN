@@ -5,12 +5,13 @@ class Fantasma (ABC):
     MODO_DISPERSION = "dispersión"
     MODO_ASUSTADO = "asustado"
 
-    def __init__(self, color, posicion_inicial, velocidad = 1):
+    def __init__(self, color, posicion_inicial, square , velocidad = 1):
         self.color = color
         self.posicion_inicial = posicion_inicial
         self.velocidad = velocidad
         self.objetivo = None
         self.modo = self.MODO_PERSECUCION
+        self.square_size = square
 
     @abstractmethod
     def mover_hacia_objetivo(self, pacman_posicion):
@@ -31,5 +32,9 @@ class Fantasma (ABC):
         pass
 
     def mover_hacia_esquina(self):
-
         pass
+
+    def draw(self, screen):
+        """Método  para dibijar el elemento."""
+        pass
+
