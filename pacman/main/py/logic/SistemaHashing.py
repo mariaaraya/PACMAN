@@ -32,7 +32,6 @@ class SistemaHashing:
             if isinstance(elemento, (AtajoLaberinto, Fruta)):
                 # En este caso, no usamos píxeles sino las posiciones de la cuadrícula
                 if elemento.colisionar(pacman):  # Comparar directamente posiciones de la cuadrícula
-                    print(f"Colisión detectada con atajo {elemento.get_nombre()} en la posición {key}.")
                     if isinstance(elemento, Fruta):
                         self.eliminar_elemento(key)
                         laberinto.actualizar_matriz(elemento.get_posicion())
@@ -42,15 +41,12 @@ class SistemaHashing:
                 # Para los demás elementos, comparamos en píxeles
                 objeto_x = elemento.get_posicion().get_x()
                 objeto_y = elemento.get_posicion().get_y()
-
                 # Ajustar la tolerancia de colisión
                 tolerancia_colision = 11  # Ajustar según el tamaño del sprite
-
                 # Verificar si las coordenadas de Pac-Man y el objeto están dentro de la tolerancia
                 if abs(pacman_x - objeto_x) < tolerancia_colision and abs(pacman_y - objeto_y) < tolerancia_colision:
                     # Si hay colisión, realiza la acción correspondiente
                     if elemento.colisionar(pacman):
-                        print(f"Colisión detectada con {elemento.get_nombre()} en la posición {key}.")
                         # Si el elemento no es un atajo, eliminarlo después de la colisión
                         self.eliminar_elemento(key)
                         laberinto.actualizar_matriz(elemento.get_posicion())

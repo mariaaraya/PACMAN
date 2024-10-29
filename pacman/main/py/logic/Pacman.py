@@ -86,7 +86,7 @@ class Pacman:
         # Ajustar la cantidad de movimiento basado en la velocidad y el tiempo delta
         movimiento = self.velocidad * delta_time
 
-        # Cambiar la nueva posición según la dirección
+        # Predecir la nueva posición basada en la dirección, sin cambiarla aún
         if direccion == "derecha":
             nuevo_x += movimiento
         elif direccion == "izquierda":
@@ -96,14 +96,24 @@ class Pacman:
         elif direccion == "abajo":
             nuevo_y += movimiento
 
-        # Verificar si la nueva posición está dentro de los límites y es válida
+        # Redondear la nueva posición a números enteros para asegurar que estén en la cuadrícula
+        nuevo_x = round(nuevo_x)
+        nuevo_y = round(nuevo_y)
+
+        # Verificar si la nueva posición está dentro de los límites y no hay una pared
         if 0 <= nuevo_y < len(self.laberinto) and 0 <= nuevo_x < len(self.laberinto[0]):
-            if self.laberinto[int(nuevo_y)][int(nuevo_x)] not in [3, 4]:  # No moverse a paredes
-                # Actualizar la posición de Pac-Man en la cuadrícula
+            if self.laberinto[int(nuevo_y)][int(nuevo_x)] not in [3, 4]:  # Verificar que no haya una pared
+                # Si la nueva posición es válida, actualizarla
                 self.posicion.set_x(nuevo_x)
                 self.posicion.set_y(nuevo_y)
-                # Actualizar la dirección actual de Pac-Man
+                # Actualizar la dirección solo si el movimiento fue exitoso
                 self.posicion.set_direccion(direccion)
+            else:
+                # Si hay una pared, Pac-Man sigue en la misma dirección, pero no cambia su posición
+                pass
+        else:
+            # Si la nueva posición está fuera de los límites, no hacer nada
+            pass
 
     def draw(self, screen):
         # Obtener la dirección actual

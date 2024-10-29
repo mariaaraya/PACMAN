@@ -10,18 +10,14 @@ class Pacdot(ElementoJuego):
         # Convertir la posición de Pac-Man a píxeles
         pacman_x = pacman.get_posicion().get_x() * pacman.square_size
         pacman_y = pacman.get_posicion().get_y() * pacman.square_size
-
         # Obtener la posición del Pacdot en píxeles
         objeto_x = self.posicion.get_x()
         objeto_y = self.posicion.get_y()
-
         # Ajustar la tolerancia de colisión
         tolerancia_colision = 11 # Ajustar según el tamaño del sprite
-
         # Verificar si las coordenadas de Pac-Man y el objeto están dentro de la tolerancia
         if abs(pacman_x - objeto_x) < tolerancia_colision and abs(pacman_y - objeto_y) < tolerancia_colision:
             pacman.colision(self.punto)  # Incrementar puntos (o realizar alguna acción)
-            print("¡Colisión detectada con Pacdot!")
             return True
         return False
 

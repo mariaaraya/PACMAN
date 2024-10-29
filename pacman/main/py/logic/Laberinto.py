@@ -272,6 +272,8 @@ class Laberinto:
                 self.pacman.mover(direccion_actual, delta_time)
 
             self.elementos.verificar_colisiones(self.pacman, self)
+            if self.verificar_nivel_completado():
+                self.avanzar_nivel()
 
             self.screen.fill((0, 0, 0))  # Limpiar pantalla
             self.draw()  # Dibujar el laberinto y los elementos

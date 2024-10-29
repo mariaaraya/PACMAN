@@ -17,26 +17,20 @@ class Fruta(ElementoJuego):
         # Obtener la posición de Pac-Man en la cuadrícula
         pacman_x = pacman.get_posicion().get_x()  # Coordenada X en la cuadrícula
         pacman_y = pacman.get_posicion().get_y()  # Coordenada Y en la cuadrícula
-
         # Obtener la posición del objeto (Pacdot o Fruta) en la cuadrícula
         objeto_x = self.posicion.get_x()  # Coordenada X del objeto en la cuadrícula
         objeto_y = self.posicion.get_y()  # Coordenada Y del objeto en la cuadrícula
         # Imprimir las posiciones de Pac-Man y el objeto
-        print(f"Posición de Pac-Man: ({pacman_x}, {pacman_y})")
-        print(f"Posición del objeto ({self.nombre}): ({objeto_x}, {objeto_y})")
         # Definir una tolerancia en la distancia (por ejemplo, 1 celda de diferencia)
         tolerancia = 1  # Puedes ajustar la tolerancia según el tamaño de las celdas
 
         # Verificar si Pac-Man está en una posición cercana (dentro de la tolerancia)
         if abs(pacman_x - objeto_x) <= tolerancia and abs(pacman_y - objeto_y) <= tolerancia:
             pacman.colision(self.punto)
-            print(f"¡Colisión detectada con {self.nombre} en la posición ({objeto_x}, {objeto_y})!")
             return True
         return False
 
     def draw(self, screen):
-        print(f"Dibujando {self.nombre} en ({self.posicion.get_x()}, {self.posicion.get_y()})")
-
         if self.nombre == "Cereza":
             image_frame = "tile080.png"
         elif self.nombre == "Fresa":
