@@ -81,13 +81,13 @@ class Laberinto:
         elif nivel == 2:
             nombre_fruta = "Fresa"
             puntos_fruta = 300
-        elif nivel in [3, 4]:
+        elif nivel in [3]:
             nombre_fruta = "Naranja"
             puntos_fruta = 500
-        elif nivel in [5, 6]:
+        elif nivel in [4]:
             nombre_fruta = "Manzana"
             puntos_fruta = 700
-        elif nivel >= 7:
+        elif nivel >= 5:
             nombre_fruta = "Uvas"
             puntos_fruta = 1000
         else:
@@ -99,6 +99,8 @@ class Laberinto:
         # Actualizar la matriz en la posición donde se coloca la fruta
         self.laberinto[posicion_fruta[1]][posicion_fruta[0]] = 2  # Cambia el valor de la celda a 2
         return fruta
+
+
 
     def generar_posicion_fruta(self):
         posiciones_validas = []
@@ -116,11 +118,19 @@ class Laberinto:
         self.laberinto = copy.deepcopy(self.laberinto_original)  # Reiniciar el laberinto con una copia profunda
         self.agregar_elementos()  # Reagregar los elementos del laberinto
 
+    def imprimir_elementos_restantes(self):
+        """Imprime los elementos restantes en el sistema de hashing para debug."""
+        print("Elementos restantes en el laberinto:")
+        for elemento in self.elementos.obtener_todos_los_elementos():
+            print(f"Elemento: {elemento.get_nombre()}, Posición: {elemento.get_posicion()}")
+
     def verificar_nivel_completado(self):
         """Verifica si todos los elementos 2 y 6 han sido recolectados."""
         for fila in self.laberinto:
             for celda in fila:
                 if celda == 2 or celda == 6:  # Aún quedan elementos por recolectar
+                    print(f"Elemento restante en la matriz: {celda}")
+                    self.imprimir_elementos_restantes()
                     return False
         return True  # No quedan más elementos
 
@@ -134,6 +144,25 @@ class Laberinto:
             print("¡Has completado todos los niveles! Fin del juego.")
             pygame.quit()
             exit()  # Cerrar completamente el juego al terminar todos los niveles
+
+    def actualizar_matrizfruta(self, posicion):
+        """Actualiza la matriz para indicar que la posición dada está vacía (1)."""
+        # Convertir la posición a las coordenadas de la matriz
+        x = posicion.get_x()
+        y = posicion.get_y()
+        # Cambiar el valor de la matriz a 1
+        self.laberinto[y][x] = 1
+        print(f"Matriz actualizada en posición ({x}, {y})")
+
+    def actualizar_matriz(self, posicion):
+        """Actualiza la matriz para indicar que la posición dada está vacía (1)."""
+        # Convertir la posición a las coordenadas de la matriz
+        x = posicion.get_x() // self.square_size
+        y = posicion.get_y() // self.square_size
+        # Cambiar el valor de la matriz a 1
+        self.laberinto[y][x] = 1
+        print(f"Matriz actualizada en posición ({x}, {y})")
+
 
     def agregar_elementos(self):
         """Agrega los Pacdots, Pildoras de Poder al sistema basado en el laberinto. Los fantasmas se crean directamente."""
@@ -224,13 +253,6 @@ class Laberinto:
         # Dibujar Pac-Man
         self.pacman.draw(self.screen)
 
-    def actualizar_matriz(self, posicion):
-        """Actualiza la matriz para indicar que la posición dada está vacía (1)."""
-        # Convertir la posición a las coordenadas de la matriz
-        x = posicion.get_x() // self.square_size
-        y = posicion.get_y() // self.square_size
-        # Cambiar el valor de la matriz a 1
-        self.laberinto[y][x] = 1
 
     def run(self):
         pygame.init()

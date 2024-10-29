@@ -29,12 +29,17 @@ class SistemaHashing:
         pacman_y = pacman.get_posicion().get_y() * pacman.square_size
         for key, elemento in list(self.elementos.items()):
             # Verificar si el elemento es un AtajoLaberinto
+            if isinstance(elemento, AtajoLaberinto):
+                if elemento.colisionar(pacman):
+                    continue  # No eliminar atajos
             if isinstance(elemento, (AtajoLaberinto, Fruta)):
                 # En este caso, no usamos píxeles sino las posiciones de la cuadrícula
                 if elemento.colisionar(pacman):  # Comparar directamente posiciones de la cuadrícula
                     if isinstance(elemento, Fruta):
+                        print(f"Fruta eliminada en {elemento.get_posicion()}")
+                        laberinto.actualizar_matrizfruta(elemento.get_posicion())
                         self.eliminar_elemento(key)
-                        laberinto.actualizar_matriz(elemento.get_posicion())
+
                     # No eliminamos los atajos
                     continue
             else:
@@ -48,8 +53,9 @@ class SistemaHashing:
                     # Si hay colisión, realiza la acción correspondiente
                     if elemento.colisionar(pacman):
                         # Si el elemento no es un atajo, eliminarlo después de la colisión
-                        self.eliminar_elemento(key)
                         laberinto.actualizar_matriz(elemento.get_posicion())
+                        self.eliminar_elemento(key)
+
 
 
     def obtener_elemento(self, key):
@@ -61,6 +67,9 @@ class SistemaHashing:
 
     def obtener_todos_los_elementos(self):
         return list(self.elementos.values())
+
+
+
 
     def imprimir_elementos(self):
         for key, elemento in self.elementos.items():
