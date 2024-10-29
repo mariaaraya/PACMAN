@@ -132,11 +132,11 @@ class Pacman:
         self.changeFeetCount += 1
 
         # Escalar la imagen para adaptarla al tamaño de la celda del laberinto
-        pacmanImage = pygame.transform.scale(pacmanImage, (int(self.square_size * 0.9), int(self.square_size * 0.9)))
+        pacmanImage = pygame.transform.scale(pacmanImage, (int(self.square_size * 1.15), int(self.square_size * 1.15)))
 
         # Dibujar la imagen en la posición actual de Pac-Man
-        screen.blit(pacmanImage, (self.posicion.get_x() * self.square_size,
-                                  self.posicion.get_y() * self.square_size))
+        screen.blit(pacmanImage, (self.posicion.get_x() * self.square_size ,
+                                  self.posicion.get_y() * self.square_size ))
 
 
 
