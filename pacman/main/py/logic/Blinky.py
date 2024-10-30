@@ -14,11 +14,13 @@ class Blinky(Fantasma):
         super().__init__("rojo",posicion_inicial,1)
         self.square_size = square
 
-    def mover_hacia_objetivo(self, pacman_posicion):
-        # Lógica para que Blinky persiga a Pac-Man
-        self.objetivo = pacman_posicion
-        # Aquí podrías agregar la lógica para moverlo hacia el objetivo
-        self._mover_hacia(self.objetivo)
+    def mover_hacia_objetivo(self, pacman_posicion, grafo):
+        # Obtener el camino más corto hacia Pac-Man usando BFS
+        camino = grafo.bfs(self.posicion_inicial, pacman_posicion)
+        if camino:
+            # Mover a la siguiente posición en el camino
+            siguiente_posicion = camino[1]
+            self.posicion_inicial = siguiente_posicion
 
     def _mover_hacia(self, objetivo):
         # Lógica para mover al fantasma hacia el objetivo (Pac-Man)
@@ -32,7 +34,9 @@ class Blinky(Fantasma):
         elif self.posicion_inicial.get_y() > objetivo.get_y():
             self.posicion_inicial.set_y(self.posicion_inicial.get_y() - self.velocidad)
 
-
+    def get_posicion(self):
+        # Devuelve la posición actual de Blinky
+        return self.posicion_inicial
 
     def draw(self, screen):
         # Verificar si el objetivo está asignado

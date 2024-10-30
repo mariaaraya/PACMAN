@@ -15,14 +15,13 @@ class Inky(Fantasma):
         super().__init__("cian", posicion_inicial, square,  1)
         self.blinky = blinky  # Referencia a Blinky
 
-    def mover_hacia_objetivo(self, pacman_posicion):
-        # Lógica para que Inky use la posición de Pac-Man y Blinky
-        blinky_pos = self.blinky.posicion_inicial
-        objetivo_x = pacman_posicion.get_x() + (blinky_pos.get_x() - pacman_posicion.get_x())
-        objetivo_y = pacman_posicion.get_y() + (blinky_pos.get_y() - pacman_posicion.get_y())
+    def mover_hacia_objetivo(self, pacman_pos, blinky_pos, grafo):
+        objetivo_x = pacman_pos.get_x() + (blinky_pos.get_x() - pacman_pos.get_x())
+        objetivo_y = pacman_pos.get_y() + (blinky_pos.get_y() - pacman_pos.get_y())
 
-        self.objetivo = Posicion(objetivo_x, objetivo_y)
-        self._mover_hacia(self.objetivo)
+        camino = grafo.bfs(self.posicion_inicial, (objetivo_x, objetivo_y))
+        if camino:
+            self.posicion_inicial = camino[1]
 
     def _mover_hacia(self, objetivo):
         # Lógica para mover a Inky hacia el objetivo

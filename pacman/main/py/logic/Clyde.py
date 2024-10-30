@@ -13,17 +13,18 @@ class Clyde(Fantasma):
     def __init__(self, posicion_inicial,square):
         super().__init__("naranja", posicion_inicial,square,1)
 
+    def mover_hacia_objetivo(self, pacman_posicion, grafo):
+        distancia = ((self.posicion_inicial.get_x() - pacman_posicion.get_x()) ** 2 +
+                     (self.posicion_inicial.get_y() - pacman_posicion.get_y()) ** 2) ** 0.5
 
-    def mover_hacia_objetivo(self, pacman_posicion):
-        if self.debe_alejarse(pacman_posicion):
-            # Lógica para alejarse de Pac-Man
-            self.objetivo = Posicion(
-                self.posicion_inicial.get_x() - (pacman_posicion.get_x() - self.posicion_inicial.get_x()),
-                self.posicion_inicial.get_y() - (pacman_posicion.get_y() - self.posicion_inicial.get_y()))
+        if distancia > 8:
+            objetivo = pacman_posicion
         else:
-            self.objetivo = pacman_posicion
+            objetivo = Posicion(0, 0)  # Se aleja yendo a la esquina (o cualquier otra posición)
 
-        self._mover_hacia(self.objetivo)
+        camino = grafo.bfs(self.posicion_inicial, (objetivo.get_x(), objetivo.get_y()))
+        if camino:
+            self.posicion_inicial = camino[1]
 
     def debe_alejarse(self, pacman_posicion):
         # Lógica para decidir si Clyde debe alejarse (ejemplo: basado en la distancia a Pac-Man)

@@ -13,6 +13,7 @@ from pacman.main.py.logic.Pinky import Pinky
 from pacman.main.py.logic.Posicion import Posicion
 from pacman.main.py.logic.SistemaHashing import SistemaHashing
 from pacman.main.py.logic.Blinky import Blinky
+from pacman.main.py.logic.Grafo import Grafo
 # Obtener la ruta absoluta del directorio raíz del proyecto (subiendo más niveles)
 current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -60,6 +61,7 @@ class Laberinto:
             [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
         ]
         self.square_size = 20  # Tamaño de cada celda en píxeles
+        self.grafo = Grafo(self.laberinto)
         self.width = len(self.laberinto[0]) * self.square_size
         self.height = len(self.laberinto) * self.square_size
         self.screen = pygame.display.set_mode((self.width, self.height))
@@ -67,7 +69,7 @@ class Laberinto:
         self.blinky = Blinky(Posicion(11, 12), self.square_size)
         self.clyde = Clyde(Posicion(11, 11), self.square_size)
         self.inky = Inky(Posicion(12, 12), self.square_size, self.blinky)
-        self.pinky = Pinky(Posicion(13, 13), self.square_size)
+        #self.pinky = Pinky(Posicion(13, 13), self.square_size)
         self.pacman = Pacman(10, Posicion(14, 26), 0, self.square_size, self.laberinto)
         self.nivel = 1  # Nivel actual del juego
         self.max_nivel = 5  # Número máximo de niveles
@@ -170,7 +172,7 @@ class Laberinto:
         blinky_added = False
         clyde_added = False
         inky_added = False
-        pinky_added = False
+        #pinky_added = False
 
         self.fantasmas = []  # Lista para almacenar los fantasmas
 
@@ -205,9 +207,9 @@ class Laberinto:
                         self.fantasmas.append(
                             Inky(Posicion(col, row), self.square_size, self.blinky))  # Pasamos referencia a Blinky si necesario
                         inky_added = True
-                    elif not pinky_added:
+                    """elif not pinky_added:
                         self.fantasmas.append(Pinky(Posicion(col, row), self.square_size))
-                        pinky_added = True
+                        pinky_added = True"""
 
     def draw(self):
         # Colores para los diferentes elementos del laberinto
@@ -292,6 +294,12 @@ class Laberinto:
 
             if direccion_actual:
                 self.pacman.mover(direccion_actual, delta_time)
+
+            for fantasma in self.fantasmas:
+                if isinstance(fantasma, Inky):  # Si el fantasma es Inky, necesita Blinky
+                    fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.blinky.get_posicion(), self.grafo)
+                else:
+                    fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo)
 
             self.elementos.verificar_colisiones(self.pacman, self)
             if self.verificar_nivel_completado():

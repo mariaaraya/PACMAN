@@ -14,16 +14,34 @@ class Pinky(Fantasma):
     def __init__(self, posicion_inicial,square):
         super().__init__("rosa", posicion_inicial, square,1)
 
-    def mover_hacia_objetivo(self, pacman_posicion):
-        # Lógica para que Pinky intente predecir la posición futura de Pac-Man
-        futuro_x = pacman_posicion.get_x() + (
-                    pacman_posicion.get_velocidad() * (1 if pacman_posicion.get_direccion() == "derecha" else -1))
-        futuro_y = pacman_posicion.get_y() + (
-                    pacman_posicion.get_velocidad() * (1 if pacman_posicion.get_direccion() == "abajo" else -1))
+    """def mover_hacia_objetivo(self, pacman, grafo):
+        # Verificamos el tipo de objeto devuelto por `get_posicion()`
+        posicion_pacman = pacman.get_posicion()
+        print(f"Tipo de posicion_pacman: {type(posicion_pacman)}")
 
-        # Establecer objetivo
-        self.objetivo = Posicion(futuro_x, futuro_y)
-        self._mover_hacia(self.objetivo)
+        # Si `posicion_pacman` no es un objeto `Posicion`, detendremos la ejecución aquí
+        if not isinstance(posicion_pacman, Posicion):
+            raise TypeError("`get_posicion()` no devolvió un objeto de tipo Posicion")
+
+        # Asumimos que `posicion_pacman` es un objeto `Posicion` y accedemos a sus métodos
+        anticipacion_x = posicion_pacman.get_x()
+        anticipacion_y = posicion_pacman.get_y()
+        direccion = posicion_pacman.get_direccion()
+
+        # Ajuste en función de la dirección de Pacman
+        if direccion == "derecha":
+            anticipacion_x += 4
+        elif direccion == "izquierda":
+            anticipacion_x -= 4
+        elif direccion == "arriba":
+            anticipacion_y -= 4
+        elif direccion == "abajo":
+            anticipacion_y += 4
+
+        # Obtener el camino desde la posición actual de Pinky hasta la posición anticipada de Pac-Man
+        camino = grafo.bfs(self.posicion_inicial, (anticipacion_x, anticipacion_y))
+        if camino:
+            self.posicion_inicial = camino[1]"""
 
     def _mover_hacia(self, objetivo):
         # Lógica para mover a Pinky hacia el objetivo

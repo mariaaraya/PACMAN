@@ -1,6 +1,6 @@
 import os
 import threading
-
+from pacman.main.py.logic.Posicion import Posicion
 import pygame
 # Obtener la ruta absoluta del directorio raíz del proyecto (subiendo más niveles)
 current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
