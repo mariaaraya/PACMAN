@@ -72,7 +72,7 @@ class Laberinto:
         #self.pinky = Pinky(Posicion(13, 13), self.square_size)
         self.pacman = Pacman(10, Posicion(14, 26), 0, self.square_size, self.laberinto)
         self.nivel = 1  # Nivel actual del juego
-        self.max_nivel = 5  # Número máximo de niveles
+        self.max_nivel = 3  # Número máximo de niveles
         self.laberinto_original = copy.deepcopy(self.laberinto)
 
     def crear_fruta_segun_nivel(self, nivel, posicion_fruta):
@@ -86,12 +86,6 @@ class Laberinto:
         elif nivel in [3]:
             nombre_fruta = "Naranja"
             puntos_fruta = 500
-        elif nivel in [4]:
-            nombre_fruta = "Manzana"
-            puntos_fruta = 700
-        elif nivel >= 5:
-            nombre_fruta = "Uvas"
-            puntos_fruta = 1000
         else:
             nombre_fruta = "Cereza"  # Por defecto
             puntos_fruta = 100
@@ -255,7 +249,6 @@ class Laberinto:
         # Dibujar Pac-Man
         self.pacman.draw(self.screen)
 
-
     def run(self):
         pygame.init()
         clock = pygame.time.Clock()
@@ -263,9 +256,14 @@ class Laberinto:
         running = True
         direccion_actual = None  # Variable para almacenar la dirección actual
         fruta_creada = False  # Controlar si ya se creó una fruta en este nivel
+        juego_empezado = False  # Variable para indicar si el juego ha comenzado
+        tiempo_inicio_juego = 0  # Variable para almacenar el tiempo de inicio
 
         # Configurar el temporizador para crear la fruta después de 5 segundos
         pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
+
+        # Configurar la fuente para mostrar el puntaje y las vidas
+        font = pygame.font.SysFont(None, 30)
 
         while running:
             delta_time = clock.tick(40) / 1000.0  # Tiempo en segundos
@@ -274,40 +272,62 @@ class Laberinto:
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RIGHT:
-                        direccion_actual = "derecha"
-                    elif event.key == pygame.K_LEFT:
-                        direccion_actual = "izquierda"
-                    elif event.key == pygame.K_UP:
-                        direccion_actual = "arriba"
-                    elif event.key == pygame.K_DOWN:
-                        direccion_actual = "abajo"
+                    if not juego_empezado:  # Si el juego no ha empezado, cualquier tecla lo inicia
+                        juego_empezado = True
+                        tiempo_inicio_juego = pygame.time.get_ticks()  # Registrar el tiempo de inicio
+                    else:
+                        if event.key == pygame.K_RIGHT:
+                            direccion_actual = "derecha"
+                        elif event.key == pygame.K_LEFT:
+                            direccion_actual = "izquierda"
+                        elif event.key == pygame.K_UP:
+                            direccion_actual = "arriba"
+                        elif event.key == pygame.K_DOWN:
+                            direccion_actual = "abajo"
+
                 # Evento personalizado para crear la fruta
                 if event.type == pygame.USEREVENT + 1 and not fruta_creada:
-                    posicion_fruta = self.generar_posicion_fruta()
-                    if posicion_fruta:
-                        # Crear una fruta basada en el nivel actual y actualizar la matriz
-                        fruta = self.crear_fruta_segun_nivel(self.nivel, posicion_fruta)
-                        self.elementos.agregar_elemento(fruta)  # Agregar la fruta al SistemaHashing
-                        fruta_creada = True  # Marcar que ya se creó la fruta en este nivel
-                        print(f"Fruta creada en la posición {posicion_fruta}")
+                    if self.nivel in [1, 2, 3]:  # Controla la aparición de la fruta en niveles 1, 2 y 3
+                        posicion_fruta = self.generar_posicion_fruta()
+                        if posicion_fruta:
+                            # Crear una fruta basada en el nivel actual y actualizar la matriz
+                            fruta = self.crear_fruta_segun_nivel(self.nivel, posicion_fruta)
+                            self.elementos.agregar_elemento(fruta)  # Agregar la fruta al SistemaHashing
+                            fruta_creada = True  # Marcar que ya se creó la fruta en este nivel
+                            print(f"Fruta creada en la posición {posicion_fruta}")
 
-            if direccion_actual:
-                self.pacman.mover(direccion_actual, delta_time)
+            if juego_empezado:
+                tiempo_actual = pygame.time.get_ticks()
+                if tiempo_actual - tiempo_inicio_juego > 2000:  # Esperar 2 segundos antes de que el juego comience a moverse
+                    if direccion_actual:
+                        self.pacman.mover(direccion_actual, delta_time)
 
-            for fantasma in self.fantasmas:
-                if isinstance(fantasma, Inky):  # Si el fantasma es Inky, necesita Blinky
-                    fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.blinky.get_posicion(), self.grafo)
-                else:
-                    fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo)
+                    for fantasma in self.fantasmas:
+                        if isinstance(fantasma, Inky):  # Si el fantasma es Inky, necesita Blinky
+                            fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.blinky.get_posicion(),
+                                                          self.grafo)
+                        else:
+                            fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo)
 
-            self.elementos.verificar_colisiones(self.pacman, self)
-            if self.verificar_nivel_completado():
-                self.avanzar_nivel()
+                    self.elementos.verificar_colisiones(self.pacman, self)
+                    if self.verificar_nivel_completado():
+                        self.avanzar_nivel()
+                        self.pacman.set_posicion(Posicion(14, 26))  # Restaurar la posición inicial de Pac-Man
+                        fruta_creada = False  # Resetear la variable para que la fruta pueda crearse en el siguiente nivel
 
             self.screen.fill((0, 0, 0))  # Limpiar pantalla
+
+            # Dibujar el puntaje en la parte superior de la pantalla
+            puntaje_text = font.render(f"Puntaje: {self.pacman.get_punto()}", True, (255, 255, 255))
+            self.screen.blit(puntaje_text, (10, 10))
+
+            # Dibujar las vidas en la parte inferior de la pantalla
+            vidas_text = font.render(f"Vidas: {self.pacman.get_vidas()}", True, (255, 255, 255))
+            self.screen.blit(vidas_text, (10, self.height - 30))
+
             self.draw()  # Dibujar el laberinto y los elementos
             pygame.display.update()  # Actualizar la pantalla
+
 
 
 
