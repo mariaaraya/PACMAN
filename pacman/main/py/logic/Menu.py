@@ -10,7 +10,7 @@ class Menu:
         self.font = pygame.font.SysFont(None, 50)
 
         # Colores para las opciones del menú
-        self.color_active = (255, 255, 0)  # Amarillo
+        self.color_active = (255, 182, 193)  # Amarillo
         self.color_inactive = (255, 255, 255)  # Blanco
 
         # Opciones del menú
