@@ -19,5 +19,5 @@ if __name__ == "__main__":
                    laberinto=laberinto.laberinto)
     posicion_actual_pacman = pacman.get_posicion()
 
-    print("Posición actual de Pac-Man:", (posicion_actual_pacman.get_x(), posicion_actual_pacman.get_y()))"""
+    print("Posición actual de Pac-Man:", (posicion_actual_pacman.get_x(), posicion_actual_pacman.get_y()))yfctdt"""
 
