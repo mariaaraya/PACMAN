@@ -3,6 +3,7 @@ import os
 import pygame
 
 from pacman.main.py.logic.Fantasma import Fantasma
+from pacman.main.py.logic.Grafo import Grafo
 from pacman.main.py.logic.Posicion import Posicion
 
 # Obtener la ruta absoluta del directorio raíz del proyecto (subiendo más niveles)
@@ -43,8 +44,7 @@ class Pinky(Fantasma):
         if camino:
             self.posicion_inicial = camino[1]"""
 
-    def _mover_hacia(self, objetivo):
-        # Lógica para mover a Pinky hacia el objetivo
+    def _mover_hacia(self, objetivo , grafo, delta_time):
         super()._mover_hacia(objetivo)
 
     def draw(self, screen):

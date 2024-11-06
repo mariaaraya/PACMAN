@@ -13,7 +13,7 @@ class Clyde(Fantasma):
     def __init__(self, posicion_inicial,square):
         super().__init__("naranja", posicion_inicial,square,1)
 
-    def mover_hacia_objetivo(self, pacman_posicion, grafo):
+    def mover_hacia_objetivo(self, pacman_posicion, grafo , delta_time):
         distancia = ((self.posicion_inicial.get_x() - pacman_posicion.get_x()) ** 2 +
                      (self.posicion_inicial.get_y() - pacman_posicion.get_y()) ** 2) ** 0.5
 

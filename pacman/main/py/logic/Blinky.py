@@ -13,14 +13,26 @@ class Blinky(Fantasma):
     def __init__(self, posicion_inicial, square  ):
         super().__init__("rojo",posicion_inicial,1)
         self.square_size = square
+        self._direccion = "derecha"  # Dirección inicial, similar a Pac-Man
 
-    def mover_hacia_objetivo(self, pacman_posicion, grafo):
-        # Obtener el camino más corto hacia Pac-Man usando BFS
-        camino = grafo.bfs(self.posicion_inicial, pacman_posicion)
-        if camino:
-            # Mover a la siguiente posición en el camino
-            siguiente_posicion = camino[1]
-            self.posicion_inicial = siguiente_posicion
+    def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
+        # Obtén el camino hacia Pac-Man usando BFS
+        camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
+                           (round(pacman_posicion.get_x()), round(pacman_posicion.get_y())))
+        # Imprime el camino completo para depuración
+        print("Camino completo hacia el objetivo:", camino)
+
+        # Verifica si hay un camino y un siguiente paso
+        if len(camino) > 1:
+            # Establece el siguiente paso como objetivo temporal
+            self.objetivo = camino[1]  # Actualiza el objetivo al siguiente nodo en el camino
+
+            # Mueve directamente al siguiente paso
+            self.posicion_inicial.set_x(self.objetivo[0])
+            self.posicion_inicial.set_y(self.objetivo[1])
+
+            # Debug: Imprime la posición actual después de actualizar
+            print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
 
     def _mover_hacia(self, objetivo):
         # Lógica para mover al fantasma hacia el objetivo (Pac-Man)
@@ -39,31 +51,23 @@ class Blinky(Fantasma):
         return self.posicion_inicial
 
     def draw(self, screen):
-        # Verificar si el objetivo está asignado
-        if self.objetivo is None:
-            # Si no hay objetivo asignado, usar una imagen estática (fantasma quieto)
+        # Selecciona las imágenes de movimiento según la dirección
+        if self._direccion == "izquierda":
+            image_frame_1 = "tile100.png"
+            image_frame_2 = "tile101.png"
+        elif self._direccion == "derecha":
             image_frame_1 = "tile096.png"
             image_frame_2 = "tile097.png"
+        elif self._direccion == "arriba":
+            image_frame_1 = "tile102.png"
+            image_frame_2 = "tile103.png"
+        elif self._direccion == "abajo":
+            image_frame_1 = "tile098.png"
+            image_frame_2 = "tile099.png"
         else:
-            # Verificar si el fantasma se está moviendo hacia alguna dirección
-            if self.posicion_inicial == self.objetivo:
-                # Si el fantasma está quieto, usa la imagen estática
-                image_frame_1 = "tile096.png"
-                image_frame_2 = "tile097.png"
-            else:
-                # Verifica la dirección en la que se está moviendo
-                if self.posicion_inicial[0] > self.objetivo[0]:  # Se mueve hacia la izquierda
-                    image_frame_1 = "tile100.png"
-                    image_frame_2 = "tile101.png"
-                elif self.posicion_inicial[0] < self.objetivo[0]:  # Se mueve hacia la derecha
-                    image_frame_1 = "tile096.png"
-                    image_frame_2 = "tile097.png"
-                elif self.posicion_inicial[1] > self.objetivo[1]:  # Se mueve hacia arriba
-                    image_frame_1 = "tile102.png"
-                    image_frame_2 = "tile103.png"
-                elif self.posicion_inicial[1] < self.objetivo[1]:  # Se mueve hacia abajo
-                    image_frame_1 = "tile098.png"
-                    image_frame_2 = "tile099.png"
+            # Si no hay dirección (por defecto o quieto)
+            image_frame_1 = "tile096.png"
+            image_frame_2 = "tile097.png"
 
         # Alternar entre las dos imágenes para simular movimiento
         if self.changeFeetCount % 2 == 0:
@@ -76,9 +80,11 @@ class Blinky(Fantasma):
         # Escalar la imagen para adaptarla al tamaño de la celda del laberinto
         ghostImage = pygame.transform.scale(ghostImage, (int(self.square_size * 0.9), int(self.square_size * 0.9)))
 
-        # Dibujar la imagen en la posición actual de Pac-Man
+        # Dibujar la imagen en la posición actual de Blinky
         screen.blit(ghostImage, (self.posicion_inicial.get_x() * self.square_size,
-                                  self.posicion_inicial.get_y() * self.square_size))
+                                 self.posicion_inicial.get_y() * self.square_size))
+
+
 
 
 

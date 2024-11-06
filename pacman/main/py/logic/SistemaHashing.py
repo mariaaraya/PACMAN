@@ -69,8 +69,6 @@ class SistemaHashing:
         return list(self.elementos.values())
 
 
-
-
     def imprimir_elementos(self):
         for key, elemento in self.elementos.items():
             print(
