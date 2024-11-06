@@ -15,13 +15,17 @@ class Blinky(Fantasma):
         self.square_size = square
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo):
+        print(f"Llamada a mover_hacia_objetivo con posición de Pac-Man: {pacman_posicion}")
         camino = grafo.dijkstra(self.posicion_inicial, pacman_posicion)
-        if camino:
+        print(f"Camino calculado por Dijkstra: {camino}")
+        if camino and len(camino) > 1:
             siguiente_posicion = camino[1]  # Ir al siguiente paso en el camino
-            self.posicion_inicial = siguiente_posicion
+            print(f"Moviéndose a la siguiente posición: {siguiente_posicion}")
+            self._mover_hacia(siguiente_posicion)
 
     def _mover_hacia(self, objetivo):
-        # Lógica para mover al fantasma hacia el objetivo (Pac-Man)
+        print(f"Intentando mover desde {self.posicion_inicial} hacia {objetivo}")
+        # Lógica para mover al fantasma
         if self.posicion_inicial.get_x() < objetivo.get_x():
             self.posicion_inicial.set_x(self.posicion_inicial.get_x() + self.velocidad)
         elif self.posicion_inicial.get_x() > objetivo.get_x():
@@ -31,6 +35,7 @@ class Blinky(Fantasma):
             self.posicion_inicial.set_y(self.posicion_inicial.get_y() + self.velocidad)
         elif self.posicion_inicial.get_y() > objetivo.get_y():
             self.posicion_inicial.set_y(self.posicion_inicial.get_y() - self.velocidad)
+        print(f"Nueva posición: {self.posicion_inicial}")
 
     def get_posicion(self):
         # Devuelve la posición actual de Blinky
