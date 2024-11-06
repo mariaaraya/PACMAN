@@ -15,11 +15,9 @@ class Blinky(Fantasma):
         self.square_size = square
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo):
-        # Obtener el camino más corto hacia Pac-Man usando BFS
-        camino = grafo.bfs(self.posicion_inicial, pacman_posicion)
+        camino = grafo.dijkstra(self.posicion_inicial, pacman_posicion)
         if camino:
-            # Mover a la siguiente posición en el camino
-            siguiente_posicion = camino[1]
+            siguiente_posicion = camino[1]  # Ir al siguiente paso en el camino
             self.posicion_inicial = siguiente_posicion
 
     def _mover_hacia(self, objetivo):
