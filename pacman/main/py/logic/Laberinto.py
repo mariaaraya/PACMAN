@@ -70,11 +70,19 @@ class Laberinto:
         self.blinky = Blinky(Posicion(11, 12), self.square_size)
         self.clyde = Clyde(Posicion(11, 11), self.square_size)
         self.inky = Inky(Posicion(12, 12), self.square_size, self.blinky)
-        #self.pinky = Pinky(Posicion(13, 13), self.square_size)
+      #  self.pinky = Pinky(Posicion(13, 13), self.square_size)
         self.pacman = Pacman(10, Posicion(14, 26), 0, self.square_size, self.laberinto)
         self.nivel = 1  # Nivel actual del juego
         self.max_nivel = 3  # Número máximo de niveles
         self.laberinto_original = copy.deepcopy(self.laberinto)
+
+    def obtener_posiciones_libres(self):
+        posiciones = []
+        for y, fila in enumerate(self.laberinto):
+            for x, celda in enumerate(fila):
+                if celda != 3:  # Verifica si la celda no es una pared
+                    posiciones.append((x, y))
+        return posiciones
 
     def crear_fruta_segun_nivel(self, nivel, posicion_fruta):
         # Definir la fruta y los puntos según el nivel
@@ -96,8 +104,6 @@ class Laberinto:
         # Actualizar la matriz en la posición donde se coloca la fruta
         self.laberinto[posicion_fruta[1]][posicion_fruta[0]] = 2  # Cambia el valor de la celda a 2
         return fruta
-
-
 
     def generar_posicion_fruta(self):
         posiciones_validas = []
@@ -167,7 +173,7 @@ class Laberinto:
         blinky_added = False
         clyde_added = False
         inky_added = False
-        #pinky_added = False
+        pinky_added = False
 
         self.fantasmas = []  # Lista para almacenar los fantasmas
 
