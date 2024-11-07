@@ -84,7 +84,7 @@ class Pacman:
         nuevo_y = y_actual
 
         # Ajustar la cantidad de movimiento basado en la velocidad y el tiempo delta
-        movimiento = self.velocidad * delta_time
+        movimiento = (self.velocidad * delta_time)
 
         # Predecir la nueva posición basada en la dirección, sin cambiarla aún
         if direccion == "derecha":
@@ -147,8 +147,3 @@ class Pacman:
         # Dibujar la imagen en la posición actual de Pac-Man
         screen.blit(pacmanImage, (self.posicion.get_x() * self.square_size ,
                                   self.posicion.get_y() * self.square_size ))
-
-
-
-
-

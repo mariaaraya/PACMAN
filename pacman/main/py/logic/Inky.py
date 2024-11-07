@@ -11,48 +11,80 @@ current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__
 BoardPath = os.path.join(current_dir, "resorces", "ElementImages")
 
 class Inky(Fantasma):
-    def __init__(self, posicion_inicial, square, blinky ):
-        super().__init__("cian", posicion_inicial, square,  1)
+    def __init__(self, posicion_inicial, square, velocidad, blinky ):
+        super().__init__("cian", posicion_inicial, square,  velocidad)
         self.blinky = blinky  # Referencia a Blinky
+        self.square_size=square
+        self.velocidad=velocidad
 
-    def mover_hacia_objetivo(self, pacman_pos, blinky_pos, grafo):
-        objetivo_x = pacman_pos.get_x() + (blinky_pos.get_x() - pacman_pos.get_x())
-        objetivo_y = pacman_pos.get_y() + (blinky_pos.get_y() - pacman_pos.get_y())
+    def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
+        # Verifica que self.blinky tenga una posición válida
+        if self.blinky and hasattr(self.blinky, "get_posicion"):
+            # Calcula el objetivo reflejando la posición de Pac-Man en relación con Blinky
+            objetivo_x = pacman_posicion.get_x() + 2 * (self.blinky.get_posicion().get_x() - pacman_posicion.get_x())
+            objetivo_y = pacman_posicion.get_y() + 2 * (self.blinky.get_posicion().get_y() - pacman_posicion.get_y())
+            objetivo = Posicion(objetivo_x, objetivo_y)
 
-        camino = grafo.bfs(self.posicion_inicial, (objetivo_x, objetivo_y))
-        if camino:
-            self.posicion_inicial = camino[1]
+            # Obtiene el camino hacia el objetivo usando BFS
+            camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
+                               (round(objetivo.get_x()), round(objetivo.get_y())))
+
+            # Establece la velocidad del fantasma (más lenta que la de Pac-Man)
+            movimiento = self.velocidad * delta_time
+
+            # Verifica si hay un camino y un siguiente paso
+            if len(camino) > 1:
+                # Establece el siguiente paso como objetivo temporal
+                self.objetivo = camino[1]  # Actualiza el objetivo al siguiente nodo en el camino
+
+                # Calcular la distancia en cada eje
+                distancia_x = self.objetivo[0] - self.posicion_inicial.get_x()
+                distancia_y = self.objetivo[1] - self.posicion_inicial.get_y()
+
+                # Mueve hacia el siguiente paso
+                if abs(distancia_x) > abs(distancia_y):
+                    self.posicion_inicial.set_x(
+                        self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento)
+                    )
+                    self._direccion = "derecha" if distancia_x > 0 else "izquierda"
+                else:
+                    self.posicion_inicial.set_y(
+                        self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento)
+                    )
+                    self._direccion = "abajo" if distancia_y > 0 else "arriba"
+
+                # Actualiza la posición final en el siguiente paso
+                self.posicion_inicial.set_x(self.objetivo[0])
+                self.posicion_inicial.set_y(self.objetivo[1])
+
+                # Imprimir la dirección actual y la posición actual para depuración
+                print("Dirección:", self._direccion)
+                print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
+        else:
+            print("Error: Blinky no está correctamente inicializado.")
 
     def _mover_hacia(self, objetivo):
         # Lógica para mover a Inky hacia el objetivo
         super()._mover_hacia(objetivo)
 
     def draw(self, screen):
-        # Verificar si el objetivo está asignado
-        if self.objetivo is None:
-            # Si no hay objetivo asignado, usar una imagen estática (fantasma quieto)
+        # Selecciona las imágenes de movimiento según la dirección
+        if self._direccion == "izquierda":
+            image_frame_1 = "tile140.png"
+            image_frame_2 = "tile141.png"
+        elif self._direccion == "derecha":
             image_frame_1 = "tile136.png"
             image_frame_2 = "tile137.png"
+        elif self._direccion == "arriba":
+            image_frame_1 = "tile142.png"
+            image_frame_2 = "tile143.png"
+        elif self._direccion == "abajo":
+            image_frame_1 = "tile138.png"
+            image_frame_2 = "tile139.png"
         else:
-            # Verificar si el fantasma se está moviendo hacia alguna dirección
-            if self.posicion_inicial == self.objetivo:
-                # Si el fantasma está quieto, usa la imagen estática
-                image_frame_1 = "tile136.png"
-                image_frame_2 = "tile137.png"
-            else:
-                # Verifica la dirección en la que se está moviendo
-                if self.posicion_inicial[0] > self.objetivo[0]:  # Se mueve hacia la izquierda
-                    image_frame_1 = "tile140.png"
-                    image_frame_2 = "tile141.png"
-                elif self.posicion_inicial[0] < self.objetivo[0]:  # Se mueve hacia la derecha
-                    image_frame_1 = "tile136.png"
-                    image_frame_2 = "tile1367.png"
-                elif self.posicion_inicial[1] > self.objetivo[1]:  # Se mueve hacia arriba
-                    image_frame_1 = "tile142.png"
-                    image_frame_2 = "tile143.png"
-                elif self.posicion_inicial[1] < self.objetivo[1]:  # Se mueve hacia abajo
-                    image_frame_1 = "tile138.png"
-                    image_frame_2 = "tile139.png"
+            # Si no hay dirección (por defecto o quieto)
+            image_frame_1 = "tile136.png"
+            image_frame_2 = "tile137.png"
 
         # Alternar entre las dos imágenes para simular movimiento
         if self.changeFeetCount % 2 == 0:

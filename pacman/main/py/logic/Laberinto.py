@@ -2,6 +2,9 @@ import os
 import copy
 import pygame
 import random
+
+from pygame.mixer import Sound
+
 from pacman.main.py.logic.AtajoLaberinto import AtajoLaberinto
 from pacman.main.py.logic.Fruta import Fruta
 from pacman.main.py.logic.Menu import Menu
@@ -67,22 +70,15 @@ class Laberinto:
         self.height = len(self.laberinto) * self.square_size
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.elementos= SistemaHashing()
-        self.blinky = Blinky(Posicion(11, 12), self.square_size)
-        self.clyde = Clyde(Posicion(11, 11), self.square_size)
-        #self.inky = Inky(Posicion(12, 12), self.square_size, self.blinky)
-        # self.pinky = Pinky(Posicion(13, 13), self.square_size)
+        self.blinky = Blinky(Posicion(11, 12), self.square_size, 1)
+        self.clyde = Clyde(Posicion(11, 11), self.square_size, 1)
+        self.inky = Inky(Posicion(11, 10), self.square_size, 1, self.blinky)
+        self.pinky = Pinky(Posicion(11, 9), self.square_size,4)
         self.pacman = Pacman(18, Posicion(14, 26), 0, self.square_size, self.laberinto)
         self.nivel = 1  # Nivel actual del juego
         self.max_nivel = 3  # Número máximo de niveles
         self.laberinto_original = copy.deepcopy(self.laberinto)
-
-    def obtener_posiciones_libres(self):
-        posiciones = []
-        for y, fila in enumerate(self.laberinto):
-            for x, celda in enumerate(fila):
-                if celda != 3:  # Verifica si la celda no es una pared
-                    posiciones.append((x, y))
-        return posiciones
+        pygame.mixer.init()
 
     def crear_fruta_segun_nivel(self, nivel, posicion_fruta):
         # Definir la fruta y los puntos según el nivel
@@ -198,17 +194,16 @@ class Laberinto:
                 elif cell_value == 4:  # Fantasmas
                     # Agregar cada fantasma solo si no ha sido agregado ya
                     if not blinky_added:
-                        self.fantasmas.append(Blinky(Posicion(col, row), self.square_size))
+                        self.fantasmas.append(Blinky(Posicion(col, row), self.square_size,1))
                         blinky_added = True
                     elif not clyde_added:
-                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size))
+                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size,1))
                         clyde_added = True
                     elif not inky_added:
-                        #self.fantasmas.append(
-                         #   Inky(Posicion(col, row), self.square_size, self.blinky))  # Pasamos referencia a Blinky si necesario
+                        self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 1, self.blinky))  # Pasamos referencia a Blinky si necesario
                         inky_added = True
                     elif not pinky_added:
-                        #self.fantasmas.append(Pinky(Posicion(col, row), self.square_size))
+                        self.fantasmas.append(Pinky(Posicion(col, row), self.square_size,4))
                         pinky_added = True
 
     def draw(self):
@@ -258,6 +253,7 @@ class Laberinto:
     def run(self):
         pygame.init()
         clock = pygame.time.Clock()
+        clock.tick(60) / 1000.0  # Establece el FPS a 60
         # Crear el menú de inicio con la imagen de fondo
         background_path = os.path.join(SpriteSheets , "GameBoardSheet.png")
         menu = Menu(self.screen, background_path)
@@ -335,8 +331,8 @@ class Laberinto:
 
                                 for fantasma in self.fantasmas:
                                     if isinstance(fantasma, Inky):  # Si el fantasma es Inky, necesita Blinky
-                                        fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.blinky.get_posicion(),
-                                                                      self.grafo)
+                                        fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo, delta_time)
+
                                     else:
                                        fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo, delta_time)
 
