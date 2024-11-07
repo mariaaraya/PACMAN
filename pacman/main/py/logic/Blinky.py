@@ -10,10 +10,9 @@ current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__
 BoardPath = os.path.join(current_dir, "resorces", "ElementImages")
 
 class Blinky(Fantasma):
-    def __init__(self, posicion_inicial, square,velocidad):
-        super().__init__("rojo",posicion_inicial,1,velocidad)
+    def __init__(self, posicion_inicial, square  ):
+        super().__init__("rojo",posicion_inicial,1, -2)
         self.square_size = square
-        self.velocidad = velocidad  # Nueva variable de velocidad
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
         # Obtén el camino hacia Pac-Man usando BFS
@@ -21,9 +20,6 @@ class Blinky(Fantasma):
                            (round(pacman_posicion.get_x()), round(pacman_posicion.get_y())))
         # Imprime el camino completo para depuración
         print("Camino completo hacia el objetivo:", camino)
-
-        # Establece la velocidad del fantasma (más lenta que la de Pac-Man)
-        movimiento = self.velocidad * (delta_time/2)
 
         # Verifica si hay un camino y un siguiente paso
         if len(camino) > 1:
@@ -36,12 +32,8 @@ class Blinky(Fantasma):
 
             # Definir la dirección en función del siguiente paso
             if abs(distancia_x) > abs(distancia_y):
-                self.posicion_inicial.set_x(
-                    self.posicion_inicial.get_x() + movimiento if distancia_x > 0 else -movimiento)
                 self._direccion = "derecha" if distancia_x > 0 else "izquierda"
             else:
-                self.posicion_inicial.set_y(
-                    self.posicion_inicial.get_y() + movimiento if distancia_y > 0 else -movimiento)
                 self._direccion = "abajo" if distancia_y > 0 else "arriba"
 
             # Mueve directamente al siguiente paso
