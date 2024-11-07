@@ -68,9 +68,9 @@ class Laberinto:
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.elementos= SistemaHashing()
         self.blinky = Blinky(Posicion(11, 12), self.square_size)
-        self.clyde = Clyde(Posicion(11, 11), self.square_size)
-        #self.inky = Inky(Posicion(12, 12), self.square_size, self.blinky)
-        # self.pinky = Pinky(Posicion(13, 13), self.square_size)
+        self.clyde = Clyde(Posicion(11, 11), self.square_size,1)
+        self.inky = Inky(Posicion(12, 12), self.square_size, 1, self.blinky)
+        self.pinky = Pinky(Posicion(13, 13), self.square_size, 4)
         self.pacman = Pacman(18, Posicion(14, 26), 0, self.square_size, self.laberinto)
         self.nivel = 1  # Nivel actual del juego
         self.max_nivel = 3  # Número máximo de niveles
@@ -201,14 +201,13 @@ class Laberinto:
                         self.fantasmas.append(Blinky(Posicion(col, row), self.square_size))
                         blinky_added = True
                     elif not clyde_added:
-                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size))
+                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 1))
                         clyde_added = True
                     elif not inky_added:
-                        #self.fantasmas.append(
-                         #   Inky(Posicion(col, row), self.square_size, self.blinky))  # Pasamos referencia a Blinky si necesario
+                        self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 1, self.blinky))
                         inky_added = True
                     elif not pinky_added:
-                        #self.fantasmas.append(Pinky(Posicion(col, row), self.square_size))
+                        self.fantasmas.append(Pinky(Posicion(col, row), self.square_size, 4))
                         pinky_added = True
 
     def draw(self):
@@ -335,8 +334,7 @@ class Laberinto:
 
                                 for fantasma in self.fantasmas:
                                     if isinstance(fantasma, Inky):  # Si el fantasma es Inky, necesita Blinky
-                                        fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.blinky.get_posicion(),
-                                                                      self.grafo)
+                                        fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo, delta_time)
                                     else:
                                        fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo, delta_time)
 
