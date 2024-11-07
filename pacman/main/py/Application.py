@@ -1,4 +1,6 @@
 # Las imágenes fueron conseguidas desde https://github.com/DevinLeamy/Pacman
+import pygame
+
 from pacman.main.py.logic.Laberinto import Laberinto
 from pacman.main.py.logic.Pacman import Pacman
 from pacman.main.py.logic.Posicion import Posicion

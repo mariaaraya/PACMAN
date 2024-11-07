@@ -11,14 +11,14 @@ current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__
 BoardPath = os.path.join(current_dir, "resorces", "ElementImages")
 
 class Clyde(Fantasma):
-    def __init__(self, posicion_inicial,square):
-        super().__init__("naranja", posicion_inicial,square,-2)
+    def __init__(self, posicion_inicial,square,velocidad):
+        super().__init__("naranja", posicion_inicial,square,-velocidad)
         self.square_size = square
         self.cambio_estado_cada = 100  # Número de frames antes de cambiar el estado (perseguir/alejarse)
         self.contador_frames = 0       # Contador de frames para alternar el estado
         self.estado_actual = "perseguir"  # Clyde empieza persiguiendo a Pac-Man
         self.objetivo_aleatorio = None  # Posición aleatoria en estado de alejamiento
-
+        self.velocidad = velocidad
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
         # Cada cierto número de frames, Clyde cambia su comportamiento
@@ -34,12 +34,12 @@ class Clyde(Fantasma):
                 self.estado_actual = "perseguir"
 
         # Define el objetivo según el estado actual de Clyde
-        if self.estado_actual == "alejarse" and self.objetivo_aleatorio:
+        if self.estado_actual == "alejarse":
             objetivo = self.objetivo_aleatorio  # Se mueve a una posición aleatoria en el laberinto
-            # Si ya llegó a la posición aleatoria, genera otra para seguir moviéndose erráticamente
-            if (round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())) == (
-            objetivo.get_x(), objetivo.get_y()):
-                self.objetivo_aleatorio = self.generar_posicion_aleatoria(grafo)
+            # Si no hay un camino válido hacia la posición aleatoria, persigue a Pac-Man
+            if not self.camino_valido(grafo, objetivo):
+                objetivo = pacman_posicion
+                self.objetivo_aleatorio = self.generar_posicion_aleatoria(grafo)  # Genera uno nuevo
         else:
             objetivo = pacman_posicion  # Persigue a Pac-Man en modo de persecución
 
@@ -53,6 +53,12 @@ class Clyde(Fantasma):
             self.posicion_inicial.set_x(siguiente_posicion[0])
             self.posicion_inicial.set_y(siguiente_posicion[1])
 
+    def camino_valido(self, grafo, objetivo):
+        """Verifica si hay un camino válido hacia el objetivo."""
+        camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
+                           (round(objetivo.get_x()), round(objetivo.get_y())))
+        return len(camino) > 1
+    
     def generar_posicion_aleatoria(self, grafo):
         """Genera una posición aleatoria en el laberinto."""
         max_x, max_y = grafo.obtener_limites()  # Obtener los límites del laberinto
