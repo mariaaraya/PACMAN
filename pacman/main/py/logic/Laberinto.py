@@ -70,9 +70,9 @@ class Laberinto:
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.elementos= SistemaHashing()
         self.blinky = Blinky(Posicion(14, 14), self.square_size)
-        #self.clyde = Clyde(Posicion(11, 11), self.square_size)
+        self.clyde = Clyde(Posicion(11, 11), self.square_size)
         #self.inky = Inky(Posicion(12, 12), self.square_size, self.blinky)
-      #  self.pinky = Pinky(Posicion(13, 13), self.square_size)
+        #self.pinky = Pinky(Posicion(13, 13), self.square_size)
         self.pacman = Pacman(10, Posicion(14, 26), 0, self.square_size, self.laberinto)
         self.nivel = 1  # Nivel actual del juego
         self.max_nivel = 3  # Número máximo de niveles
@@ -201,16 +201,21 @@ class Laberinto:
                     if not blinky_added:
                         self.fantasmas.append(Blinky(Posicion(col, row), self.square_size))
                         blinky_added = True
-                        # elif not clyde_added:
-                        #  self.fantasmas.append(Clyde(Posicion(col, row), self.square_size))
-                        #clyde_added = True
-                        #elif not inky_added:
-                        # self.fantasmas.append(
-                        # Inky(Posicion(col, row), self.square_size, self.blinky))  # Pasamos referencia a Blinky si necesario
-                        # inky_added = True
-                    """elif not pinky_added:
-                        self.fantasmas.append(Pinky(Posicion(col, row), self.square_size))
-                        pinky_added = True"""
+                        # Agregar a Clyde solo una vez
+                        if not clyde_added:
+                            self.fantasmas.append(Clyde(Posicion(col, row), self.square_size))
+                            clyde_added = True  # Marcar como agregado
+
+                        # Agregar a Inky solo una vez y pasando una referencia a Blinky (si es necesario)
+                        elif not inky_added:
+                            self.fantasmas.append(Inky(Posicion(col, row), self.square_size,
+                                                       self.blinky))  # Pasamos la referencia a Blinky
+                            inky_added = True  # Marcar como agregado
+
+                        # Agregar a Pinky solo una vez
+                        elif not pinky_added:
+                            self.fantasmas.append(Pinky(Posicion(col, row), self.square_size))
+                            pinky_added = True  # Marcar como agregado
 
     def draw(self):
         # Colores para los diferentes elementos del laberinto
@@ -362,7 +367,7 @@ class Laberinto:
 
 
 
-    def visualizar_grafo(self):
+    '''def visualizar_grafo(self):
         # Crea un grafo de networkx basado en los datos de tu clase Grafo
         G = nx.Graph()
         for vertice, adyacentes in self.grafo.vertices.items():
@@ -375,7 +380,7 @@ class Laberinto:
         nx.draw(G, pos, with_labels=True, node_size=20, font_size=8, node_color="skyblue",
                 edge_color="gray")  # Ajusta node_size y font_size si es necesario
         plt.title("Visualización del Grafo del Laberinto")
-        plt.show()
+        plt.show()'''
 
 
 

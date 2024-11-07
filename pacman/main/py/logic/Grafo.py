@@ -36,6 +36,11 @@ class Grafo:
                             if posicion in posiciones_especiales:
                                 print(f"Arista añadida entre {posicion} y {adyacente}")
 
+    def obtener_limites(self):
+        max_x = len(self.laberinto[0]) - 1  # Máximo índice de columna
+        max_y = len(self.laberinto) - 1  # Máximo índice de fila
+        return max_x, max_y
+    
     def bfs(self, inicio, objetivo):
         if inicio not in self.vertices or objetivo not in self.vertices:
             print(f"Uno de los puntos {inicio} o {objetivo} no está en el grafo.")

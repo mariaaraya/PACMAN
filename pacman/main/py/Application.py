@@ -15,7 +15,7 @@ if __name__ == "__main__":
     #controller = Controller(model, view)
     #controller.run()  # Ejecuta el juego directamente en el nivel 1
     laberinto = Laberinto()
-    laberinto.visualizar_grafo()
+    #laberinto.visualizar_grafo()
     laberinto.run()
 
     """posiciones_libres = laberinto.obtener_posiciones_libres()

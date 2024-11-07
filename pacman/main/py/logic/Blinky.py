@@ -11,7 +11,7 @@ BoardPath = os.path.join(current_dir, "resorces", "ElementImages")
 
 class Blinky(Fantasma):
     def __init__(self, posicion_inicial, square  ):
-        super().__init__("rojo",posicion_inicial,1)
+        super().__init__("rojo",posicion_inicial,1,-2)
         self.square_size = square
         self._direccion = "derecha"  # Dirección inicial, similar a Pac-Man
 
