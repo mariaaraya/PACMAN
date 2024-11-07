@@ -11,9 +11,8 @@ BoardPath = os.path.join(current_dir, "resorces", "ElementImages")
 
 class Blinky(Fantasma):
     def __init__(self, posicion_inicial, square  ):
-        super().__init__("rojo",posicion_inicial,1,-2)
+        super().__init__("rojo",posicion_inicial,1, -2)
         self.square_size = square
-        self._direccion = "derecha"  # Dirección inicial, similar a Pac-Man
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
         # Obtén el camino hacia Pac-Man usando BFS
@@ -27,11 +26,22 @@ class Blinky(Fantasma):
             # Establece el siguiente paso como objetivo temporal
             self.objetivo = camino[1]  # Actualiza el objetivo al siguiente nodo en el camino
 
+            # Calcular la distancia en cada eje
+            distancia_x = self.objetivo[0] - self.posicion_inicial.get_x()
+            distancia_y = self.objetivo[1] - self.posicion_inicial.get_y()
+
+            # Definir la dirección en función del siguiente paso
+            if abs(distancia_x) > abs(distancia_y):
+                self._direccion = "derecha" if distancia_x > 0 else "izquierda"
+            else:
+                self._direccion = "abajo" if distancia_y > 0 else "arriba"
+
             # Mueve directamente al siguiente paso
             self.posicion_inicial.set_x(self.objetivo[0])
             self.posicion_inicial.set_y(self.objetivo[1])
 
-            # Debug: Imprime la posición actual después de actualizar
+            # Debug: Imprime la dirección actual y la posición actual después de actualizar
+            print("Dirección:", self._direccion)
             print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
 
     def _mover_hacia(self, objetivo):

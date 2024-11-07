@@ -5,8 +5,9 @@ class Fantasma (ABC):
     MODO_DISPERSION = "dispersión"
     MODO_ASUSTADO = "asustado"
 
-    def __init__(self, color, posicion_inicial, square , velocidad = 1):
+    def __init__(self, color, posicion_inicial, square , velocidad = 10):
         self.color = color
+        self._direccion = "derecha"
         self.posicion_inicial = posicion_inicial
         self.posicion_actual = posicion_inicial  # Posición actual del fantasma
         self.velocidad = velocidad

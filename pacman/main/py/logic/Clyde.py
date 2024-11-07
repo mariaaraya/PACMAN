@@ -14,7 +14,6 @@ class Clyde(Fantasma):
     def __init__(self, posicion_inicial,square):
         super().__init__("naranja", posicion_inicial,square,-2)
         self.square_size = square
-        self._direccion = "derecha"  # Dirección inicial, similar a Pac-Man}
         self.cambio_estado_cada = 100  # Número de frames antes de cambiar el estado (perseguir/alejarse)
         self.contador_frames = 0       # Contador de frames para alternar el estado
         self.estado_actual = "perseguir"  # Clyde empieza persiguiendo a Pac-Man
