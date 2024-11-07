@@ -67,11 +67,11 @@ class Laberinto:
         self.height = len(self.laberinto) * self.square_size
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.elementos= SistemaHashing()
-        self.blinky = Blinky(Posicion(11, 12), self.square_size)
-        self.clyde = Clyde(Posicion(11, 11), self.square_size,1)
+        self.blinky = Blinky(Posicion(11, 12), self.square_size,1)
+        self.clyde = Clyde(Posicion(11, 11), self.square_size,1,1)
         self.inky = Inky(Posicion(12, 12), self.square_size, 1, self.blinky)
         self.pinky = Pinky(Posicion(13, 13), self.square_size, 4)
-        self.pacman = Pacman(18, Posicion(14, 26), 0, self.square_size, self.laberinto)
+        self.pacman = Pacman(15, Posicion(14, 26), 0, self.square_size, self.laberinto)
         self.nivel = 1  # Nivel actual del juego
         self.max_nivel = 3  # Número máximo de niveles
         self.laberinto_original = copy.deepcopy(self.laberinto)
@@ -198,13 +198,13 @@ class Laberinto:
                 elif cell_value == 4:  # Fantasmas
                     # Agregar cada fantasma solo si no ha sido agregado ya
                     if not blinky_added:
-                        self.fantasmas.append(Blinky(Posicion(col, row), self.square_size))
+                        self.fantasmas.append(Blinky(Posicion(col, row), self.square_size,4))
                         blinky_added = True
                     elif not clyde_added:
-                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 1))
+                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 4,4))
                         clyde_added = True
                     elif not inky_added:
-                        self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 1, self.blinky))
+                        self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 4, self.blinky))
                         inky_added = True
                     elif not pinky_added:
                         self.fantasmas.append(Pinky(Posicion(col, row), self.square_size, 4))

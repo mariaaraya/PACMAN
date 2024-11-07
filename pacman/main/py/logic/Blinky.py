@@ -10,35 +10,41 @@ current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__
 BoardPath = os.path.join(current_dir, "resorces", "ElementImages")
 
 class Blinky(Fantasma):
-    def __init__(self, posicion_inicial, square  ):
-        super().__init__("rojo",posicion_inicial,1, -2)
+    def __init__(self, posicion_inicial, square,velocidad):
+        super().__init__("rojo",posicion_inicial,1, velocidad)
         self.square_size = square
-
+        self.velocidad=velocidad
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
         # Obtén el camino hacia Pac-Man usando BFS
         camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
-                           (round(pacman_posicion.get_x()), round(pacman_posicion.get_y())))
+                            (round(pacman_posicion.get_x()), round(pacman_posicion.get_y())))
         # Imprime el camino completo para depuración
         print("Camino completo hacia el objetivo:", camino)
+
+        movimiento = self.velocidad * delta_time
 
         # Verifica si hay un camino y un siguiente paso
         if len(camino) > 1:
             # Establece el siguiente paso como objetivo temporal
             self.objetivo = camino[1]  # Actualiza el objetivo al siguiente nodo en el camino
-
             # Calcular la distancia en cada eje
             distancia_x = self.objetivo[0] - self.posicion_inicial.get_x()
             distancia_y = self.objetivo[1] - self.posicion_inicial.get_y()
 
             # Definir la dirección en función del siguiente paso
+            # Movimiento gradual hacia el objetivo según la velocidad
             if abs(distancia_x) > abs(distancia_y):
+                self.posicion_inicial.set_x(
+                self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento))
                 self._direccion = "derecha" if distancia_x > 0 else "izquierda"
             else:
+                self.posicion_inicial.set_y(
+                self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento))
                 self._direccion = "abajo" if distancia_y > 0 else "arriba"
 
             # Mueve directamente al siguiente paso
-            self.posicion_inicial.set_x(self.objetivo[0])
-            self.posicion_inicial.set_y(self.objetivo[1])
+            #self.posicion_inicial.set_x(self.objetivo[0])
+            #self.posicion_inicial.set_y(self.objetivo[1])
 
             # Debug: Imprime la dirección actual y la posición actual después de actualizar
             print("Dirección:", self._direccion)
