@@ -21,35 +21,38 @@ class Pinky(Fantasma):
         # Calcular el objetivo adelantado en la dirección de Pac-Man
         anticipacion_x = pacman_posicion.get_x()
         anticipacion_y = pacman_posicion.get_y()
-        direccion = pacman_posicion.get_direccion()  # Asumiendo que Pac-Man tiene un método para obtener la dirección
+        direccion = pacman_posicion.get_direccion()  # Dirección de Pac-Man
 
-        # Ajuste de la posición anticipada según la dirección de Pac-Man
+        # Ajustar la posición anticipada según la dirección de Pac-Man
+        anticipacion_distancia = 4  # Espacios de anticipación
         if direccion == "derecha":
-            anticipacion_x += 4
+            anticipacion_x += anticipacion_distancia
         elif direccion == "izquierda":
-            anticipacion_x -= 4
+            anticipacion_x -= anticipacion_distancia
         elif direccion == "arriba":
-            anticipacion_y -= 4
+            anticipacion_y -= anticipacion_distancia
         elif direccion == "abajo":
-            anticipacion_y += 4
+            anticipacion_y += anticipacion_distancia
 
-        # Obtén el camino hacia la posición anticipada
+        # Encuentra el camino hacia la posición anticipada
         camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
                            (round(anticipacion_x), round(anticipacion_y)))
 
         # Control de movimiento y velocidad
         movimiento = self.velocidad * delta_time
         if len(camino) > 1:
-            self.objetivo = camino[1]
-            distancia_x = self.objetivo[0] - self.posicion_inicial.get_x()
-            distancia_y = self.objetivo[1] - self.posicion_inicial.get_y()
+            siguiente_x, siguiente_y = camino[1]
+            distancia_x = siguiente_x - self.posicion_inicial.get_x()
+            distancia_y = siguiente_y - self.posicion_inicial.get_y()
 
             # Movimiento en la dirección del siguiente paso
             if abs(distancia_x) > abs(distancia_y):
-                self.posicion_inicial.set_x(self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento))
+                desplazamiento = movimiento if distancia_x > 0 else -movimiento
+                self.posicion_inicial.set_x(self.posicion_inicial.get_x() + desplazamiento)
                 self._direccion = "derecha" if distancia_x > 0 else "izquierda"
             else:
-                self.posicion_inicial.set_y(self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento))
+                desplazamiento = movimiento if distancia_y > 0 else -movimiento
+                self.posicion_inicial.set_y(self.posicion_inicial.get_y() + desplazamiento)
                 self._direccion = "abajo" if distancia_y > 0 else "arriba"
 
     def _mover_hacia(self, objetivo , grafo, delta_time):

@@ -60,3 +60,8 @@ class Grafo:
                     cola.append((vecino, camino + [vecino]))
         print(f"No se encontró un camino entre {inicio} y {objetivo}.")
         return []
+
+    def es_celda_vacia(self, x, y):
+        x = int(x)  # Asegúrate de que x sea un entero
+        y = int(y)  # Asegúrate de que y sea un entero
+        return self.laberinto[y][x] != 3  # Retorna True si la celda no es una pared (3)

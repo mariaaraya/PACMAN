@@ -100,4 +100,3 @@ class Inky(Fantasma):
         # Dibujar la imagen en la posición actual de Blinky
         screen.blit(ghostImage, (self.posicion_inicial.get_x() * self.square_size,
                                  self.posicion_inicial.get_y() * self.square_size))
-
