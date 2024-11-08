@@ -262,6 +262,7 @@ class Laberinto:
         menu = Menu(self.screen, background_path)
         running = True
         menu_active = True  # El menú está activo al inicio
+
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -333,10 +334,7 @@ class Laberinto:
                                     self.pacman.mover(direccion_actual, delta_time)
 
                                 for fantasma in self.fantasmas:
-                                    if isinstance(fantasma, Inky):  # Si el fantasma es Inky, necesita Blinky
-                                        fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo, delta_time)
-                                    else:
-                                       fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo, delta_time)
+                                    fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo, delta_time)
 
                                 self.elementos.verificar_colisiones(self.pacman, self)
                                 if self.verificar_nivel_completado():

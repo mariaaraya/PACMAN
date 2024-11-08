@@ -34,17 +34,17 @@ class Pinky(Fantasma):
         elif direccion == "abajo":
             anticipacion_y += anticipacion_distancia
 
-        # Verificar si hay un camino al punto anticipado
+        # Verificar si el camino anticipado está disponible y cerca de Pac-Man
         camino_anticipado = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
                                       (round(anticipacion_x), round(anticipacion_y)))
 
-        # Si no hay camino anticipado o está muy lejos, ir directamente hacia Pac-Man
-        if len(camino_anticipado) <= 1 or len(camino_anticipado) > anticipacion_distancia + 2:
-            # No hay camino válido o es inalcanzable, seguir a Pac-Man directamente
+        # Si el camino anticipado no es viable o está lejos, ir directamente hacia Pac-Man
+        if len(camino_anticipado) <= 1 or len(camino_anticipado) > anticipacion_distancia + 3:
+            # Seguir a Pac-Man directamente
             camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
                                (round(pacman_posicion.get_x()), round(pacman_posicion.get_y())))
         else:
-            # Usar el camino anticipado
+            # Usar el camino anticipado para interceptar
             camino = camino_anticipado
 
         # Control de movimiento y velocidad
