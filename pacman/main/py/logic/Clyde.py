@@ -4,7 +4,7 @@ import random
 import pygame
 
 from pacman.main.py.logic.Fantasma import Fantasma
-from pacman.main.py.logic.Posicion import Posicion
+
 # Obtener la ruta absoluta del directorio raíz del proyecto (subiendo más niveles)
 current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 # Construir la ruta correcta hacia las imágenes
@@ -16,11 +16,14 @@ class Clyde(Fantasma):
         self.square_size = square
         self.cambio_estado_cada = 200  # Número de frames antes de cambiar el estado (perseguir/alejarse)
         self.contador_frames = 0  # Contador de frames para alternar el estado
-        self.estado_actual = "perseguir"  # Clyde empieza persiguiendo a Pac-Man
-        self.objetivo_aleatorio = None  # Posición aleatoria en estado de alejamiento
+        self.estado_actual = "asustado"  # Clyde empieza persiguiendo a Pac-Man
         self.velocidad_persiguiendo = velocidad_persiguiendo
         self.velocidad_alejarse = velocidad_alejarse
         self.distancia_minima_alejamiento = 5  # Distancia mínima en la que Clyde comenzará a alejarse
+
+    def get_posicion(self):
+        # Devuelve la posición actual de Blinky
+        return self.posicion_inicial
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
         # Calcula la distancia entre Clyde y Pac-Man
@@ -69,12 +72,7 @@ class Clyde(Fantasma):
         elif self.estado_actual == "alejarse":
             self.objetivo_aleatorio = self.generar_posicion_aleatoria(grafo)
 
-    def generar_posicion_aleatoria(self, grafo):
-        """Genera una posición aleatoria en el laberinto."""
-        max_x, max_y = grafo.obtener_limites()  # Obtener los límites del laberinto
-        x_aleatorio = random.randint(0, max_x)
-        y_aleatorio = random.randint(0, max_y)
-        return Posicion(x_aleatorio, y_aleatorio)
+
 
     def camino_valido(self, grafo, objetivo):
         """Verifica si hay un camino válido hacia el objetivo."""
@@ -82,9 +80,6 @@ class Clyde(Fantasma):
                            (round(objetivo.get_x()), round(objetivo.get_y())))
         return len(camino) > 1
 
-    def _mover_hacia(self, objetivo):
-        # Lógica para mover a Clyde hacia el objetivo
-        super()._mover_hacia(objetivo)
 
     def draw(self, screen):
             # Selecciona las imágenes de movimiento según la dirección

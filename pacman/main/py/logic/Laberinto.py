@@ -1,5 +1,7 @@
 import os
 import copy
+import threading
+
 import pygame
 import random
 from pacman.main.py.logic.AtajoLaberinto import AtajoLaberinto
@@ -71,10 +73,34 @@ class Laberinto:
         self.clyde = Clyde(Posicion(11, 11), self.square_size,1,1)
         self.inky = Inky(Posicion(12, 12), self.square_size, 1, self.blinky)
         self.pinky = Pinky(Posicion(13, 13), self.square_size, 4)
-        self.pacman = Pacman(15, Posicion(14, 26), 0, self.square_size, self.laberinto)
+        self.pacman = Pacman(15, Posicion(14, 26), 0, self.square_size, self)
         self.nivel = 1  # Nivel actual del juego
         self.max_nivel = 3  # Número máximo de niveles
         self.laberinto_original = copy.deepcopy(self.laberinto)
+
+    def obtener_matriz(self):
+        return self.laberinto
+
+    def activar_modo_asustado(self, duracion):
+        """Activa el modo asustado en todos los fantasmas y el modo persecución en Pac-Man por una duración específica."""
+        # Cambiar el modo de los fantasmas a asustado
+        for fantasma in self.fantasmas:
+            fantasma.actualizar_modo("asustado")
+
+        # Cambiar el modo de Pac-Man a persecución
+        self.pacman.set_modo("persecución")
+
+        # Programar el regreso al modo normal después de la duración especificada
+        threading.Timer(duracion, self.desactivar_modo_asustado).start()
+
+    def desactivar_modo_asustado(self):
+        """Vuelve todos los fantasmas al modo persecución y Pac-Man al modo normal."""
+        # Cambiar el modo de los fantasmas a persecución
+        for fantasma in self.fantasmas:
+            fantasma.actualizar_modo("persecución")
+
+        # Cambiar el modo de Pac-Man a normal
+        self.pacman.set_modo("normal")
 
     def obtener_posiciones_libres(self):
         posiciones = []
@@ -200,10 +226,10 @@ class Laberinto:
                         #self.fantasmas.append(Blinky(Posicion(col, row), self.square_size,4))
                         blinky_added = True
                     elif not clyde_added:
-                        #self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 4,4))
+                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 4,4))
                         clyde_added = True
                     elif not inky_added:
-                        self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 4, self.blinky))
+                        #self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 4, self.blinky))
                         inky_added = True
                     elif not pinky_added:
                         #self.fantasmas.append(Pinky(Posicion(col, row), self.square_size, 4))
@@ -333,7 +359,9 @@ class Laberinto:
                                     self.pacman.mover(direccion_actual, delta_time)
 
                                 for fantasma in self.fantasmas:
-                                    fantasma.mover_hacia_objetivo(self.pacman.get_posicion(), self.grafo, delta_time)
+                                    fantasma.mover(self.pacman.get_posicion(), self.grafo, delta_time)
+
+
 
                                 self.elementos.verificar_colisiones(self.pacman, self)
                                 if self.verificar_nivel_completado():

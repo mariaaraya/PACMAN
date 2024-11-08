@@ -21,6 +21,8 @@ class Pacdot(ElementoJuego):
             return True
         return False
 
+
+
     def draw(self, screen):
         """Método para dibujar el Pacdot en la pantalla."""
         # Define el color del Pacdot (por ejemplo, amarillo)

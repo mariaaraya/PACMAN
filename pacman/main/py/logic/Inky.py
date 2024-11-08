@@ -19,7 +19,7 @@ class Inky(Fantasma):
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
         if self.first_move_to_target:
-            objetivo_x, objetivo_y = 13, 15
+            objetivo_x, objetivo_y = 13, 14
             objetivo = Posicion(objetivo_x, objetivo_y)
 
             # Obtener el camino hacia el objetivo inicial
@@ -28,12 +28,12 @@ class Inky(Fantasma):
                 (round(objetivo.get_x()), round(objetivo.get_y()))
             )
 
-            # Verifica si ya ha llegado exactamente a [13, 15]
+            # Verifica si ya ha llegado exactamente a [13, 14]
             if round(self.posicion_inicial.get_x()) == objetivo_x and round(
                     self.posicion_inicial.get_y()) == objetivo_y:
-                self.first_move_to_target = False  # Desactiva la bandera si ya llegó a (13, 15)
+                self.first_move_to_target = False  # Desactiva la bandera si ya llegó a (13, 14)
             elif len(camino) > 1:
-                # Continuar hacia el objetivo inicial [13, 15] si aún no ha llegado
+                # Continuar hacia el objetivo inicial [13, 14] si aún no ha llegado
                 siguiente_x, siguiente_y = camino[1]
                 self.posicion_inicial.set_x(siguiente_x)
                 self.posicion_inicial.set_y(siguiente_y)
@@ -41,8 +41,8 @@ class Inky(Fantasma):
                 # Redondea la posición después del movimiento
                 self.posicion_inicial.set_x(round(self.posicion_inicial.get_x()))
                 self.posicion_inicial.set_y(round(self.posicion_inicial.get_y()))
-
-                return  # Sale de la función para no continuar con la lógica de objetivo normal
+                print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
+                return
 
                 # Verifica que self.blinky tenga una posición válida
         if self.blinky and hasattr(self.blinky, "get_posicion"):

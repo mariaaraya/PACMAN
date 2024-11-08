@@ -68,9 +68,10 @@ class Pacman:
         self.tiempo_colision_desactivada = pygame.time.get_ticks()  # Guardar el tiempo actual
 
     def colision_pildora(self, duracion):
-        self.set_modo(MODO_PERSECUCION)
-        timer = threading.Timer(duracion, self.set_modo, [MODO_NORMAL])
-        timer.start()
+        """Activa el modo asustado en el laberinto para los fantasmas durante la duración de la pildora."""
+        self.laberinto.activar_modo_asustado(duracion)
+
+
 
     def mover(self, direccion, delta_time):
         """Mueve a Pac-Man en la dirección dada, teniendo en cuenta su velocidad y el tiempo transcurrido."""
@@ -99,10 +100,12 @@ class Pacman:
         # Redondear la nueva posición a números enteros para asegurar que estén en la cuadrícula
         nuevo_x = round(nuevo_x)
         nuevo_y = round(nuevo_y)
+        # Obtener la matriz del laberinto
+        matriz_laberinto = self.laberinto.obtener_matriz()
 
         # Verificar si la nueva posición está dentro de los límites y no hay una pared
-        if 0 <= nuevo_y < len(self.laberinto) and 0 <= nuevo_x < len(self.laberinto[0]):
-            if self.laberinto[int(nuevo_y)][int(nuevo_x)] not in [3, 4]:  # Verificar que no haya una pared
+        if 0 <= nuevo_y < len(matriz_laberinto) and 0 <= nuevo_x < len(matriz_laberinto[0]):
+            if matriz_laberinto[int(nuevo_y)][int(nuevo_x)] not in [3, 4]:  # Verificar que no haya una pared
                 # Si la nueva posición es válida, actualizarla
                 self.posicion.set_x(nuevo_x)
                 self.posicion.set_y(nuevo_y)

@@ -16,6 +16,9 @@ class Pinky(Fantasma):
         super().__init__("rosa", posicion_inicial, square,velocidad)
         self.square_size=square
         self.velocidad=velocidad
+        self.first_move_to_target = True
+
+
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
         # Calcular el objetivo adelantado en la dirección de Pac-Man
@@ -66,6 +69,7 @@ class Pinky(Fantasma):
 
     def _mover_hacia(self, objetivo , grafo, delta_time):
         super()._mover_hacia(objetivo)
+
 
     def draw(self, screen):
         # Selecciona las imágenes de movimiento según la dirección

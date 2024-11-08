@@ -22,7 +22,7 @@ class PildoraPoder(ElementoJuego):
         # Verificar si las coordenadas de Pac-Man y el objeto están dentro de la tolerancia
         if abs(pacman_x - objeto_x) < tolerancia_colision and abs(pacman_y - objeto_y) < tolerancia_colision:
             pacman.colision_pildora(self.duracion)
-            print("¡Colisión detectada con Pacdot!")
+            print("¡Colisión detectada con Pidora de Poder !")
             return True
         return False
 
