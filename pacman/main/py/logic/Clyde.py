@@ -4,6 +4,7 @@ import random
 import pygame
 
 from pacman.main.py.logic.Fantasma import Fantasma
+from pacman.main.py.logic.Posicion import Posicion
 
 # Obtener la ruta absoluta del directorio raíz del proyecto (subiendo más niveles)
 current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -21,15 +22,21 @@ class Clyde(Fantasma):
         self.velocidad_alejarse = velocidad_alejarse
         self.distancia_minima_alejamiento = 5  # Distancia mínima en la que Clyde comenzará a alejarse
 
-    def get_posicion(self):
-        # Devuelve la posición actual de Blinky
-        return self.posicion_inicial
+
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
         # Calcula la distancia entre Clyde y Pac-Man
         dx = pacman_posicion.get_x() - self.posicion_inicial.get_x()
         dy = pacman_posicion.get_y() - self.posicion_inicial.get_y()
         distancia_a_pacman = (dx ** 2 + dy ** 2) ** 0.5
+
+        # Verificar si Clyde está en modo dispersión y ha llegado a su posición inicial
+        if self.modo == self.MODO_DISPERSION and (
+                round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())) == (
+                round(self.posicion_aux.get_x()), round(self.posicion_aux.get_y())):
+            # Cambiar el modo de Clyde
+            self.modo = self.MODO_ASUSTADO if random.choice([True, False]) else self.MODO_PERSECUCION
+
 
         # Cambia el estado según la distancia a Pac-Man y el contador de frames
         self.contador_frames += 1
@@ -68,10 +75,11 @@ class Clyde(Fantasma):
                 self.posicion_inicial.set_x(nueva_x)
                 self.posicion_inicial.set_y(nueva_y)
 
-        # Si no hay un camino y Clyde está en modo alejarse, genera una nueva posición aleatoria
+            # Si no hay un camino y Clyde está en modo alejarse, genera una nueva posición aleatoria
         elif self.estado_actual == "alejarse":
             self.objetivo_aleatorio = self.generar_posicion_aleatoria(grafo)
 
+        print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
 
 
     def camino_valido(self, grafo, objetivo):
@@ -81,36 +89,39 @@ class Clyde(Fantasma):
         return len(camino) > 1
 
 
-    def draw(self, screen):
-            # Selecciona las imágenes de movimiento según la dirección
-            if self._direccion == "izquierda":
-                image_frame_1 = "tile1448.png"
-                image_frame_2 = "tile1449.png"
-            elif self._direccion == "derecha":
-                image_frame_1 = "tile144.png"
-                image_frame_2 = "tile145.png"
-            elif self._direccion == "arriba":
-                image_frame_1 = "tile150.png"
-                image_frame_2 = "tile151.png"
-            elif self._direccion == "abajo":
-                image_frame_1 = "tile146.png"
-                image_frame_2 = "tile147.png"
-            else:
-                # Si no hay dirección (por defecto o quieto)
-                image_frame_1 = "tile144.png"
-                image_frame_2 = "tile145.png"
+    def draw_persecucion(self, screen):
+        # Selecciona las imágenes de movimiento según la dirección
+        if self._direccion == "izquierda":
+            image_frame_1 = "tile148.png"
+            image_frame_2 = "tile149.png"
+        elif self._direccion == "derecha":
+            image_frame_1 = "tile144.png"
+            image_frame_2 = "tile145.png"
+        elif self._direccion == "arriba":
+            image_frame_1 = "tile150.png"
+            image_frame_2 = "tile151.png"
+        elif self._direccion == "abajo":
+            image_frame_1 = "tile146.png"
+            image_frame_2 = "tile147.png"
+        else:
+            # Imagen por defecto si no hay dirección
+            image_frame_1 = "tile144.png"
+            image_frame_2 = "tile145.png"
 
-            # Alternar entre las dos imágenes para simular movimiento
-            if self.changeFeetCount % 2 == 0:
-                ghostImage = pygame.image.load(os.path.join(BoardPath, image_frame_1))
-            else:
-                ghostImage = pygame.image.load(os.path.join(BoardPath, image_frame_2))
+        # Alternar entre las dos imágenes para simular movimiento
+        if self.changeFeetCount % 2 == 0:
+            ghostImage = pygame.image.load(os.path.join(BoardPath, image_frame_1))
+        else:
+            ghostImage = pygame.image.load(os.path.join(BoardPath, image_frame_2))
 
-            self.changeFeetCount += 1
+        self.changeFeetCount += 1
 
-            # Escalar la imagen para adaptarla al tamaño de la celda del laberinto
-            ghostImage = pygame.transform.scale(ghostImage, (int(self.square_size * 0.9), int(self.square_size * 0.9)))
+        # Escalar la imagen para adaptarla al tamaño de la celda del laberinto
+        ghostImage = pygame.transform.scale(ghostImage, (int(self.square_size * 0.9), int(self.square_size * 0.9)))
 
-            # Dibujar la imagen en la posición actual de Blinky
-            screen.blit(ghostImage, (self.posicion_inicial.get_x() * self.square_size,
-                                     self.posicion_inicial.get_y() * self.square_size))
+        # Verificar y actualizar la posición actual en cada ciclo
+        current_x = self.posicion_inicial.get_x() * self.square_size
+        current_y = self.posicion_inicial.get_y() * self.square_size
+
+        # Dibujar la imagen en la posición actual de Clyde
+        screen.blit(ghostImage, (current_x, current_y))

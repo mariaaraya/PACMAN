@@ -20,58 +20,59 @@ class Pinky(Fantasma):
 
 
 
+
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
-        # Calcular el objetivo adelantado en la dirección de Pac-Man
-        anticipacion_x = pacman_posicion.get_x()
-        anticipacion_y = pacman_posicion.get_y()
-        direccion = pacman_posicion.get_direccion()  # Dirección de Pac-Man
+            # Calcular el objetivo adelantado en la dirección de Pac-Man
+            anticipacion_x = pacman_posicion.get_x()
+            anticipacion_y = pacman_posicion.get_y()
+            direccion = pacman_posicion.get_direccion()  # Dirección de Pac-Man
 
-        # Ajustar la posición anticipada según la dirección de Pac-Man
-        anticipacion_distancia = 4  # Distancia en tiles que Pinky intentará anticipar
-        if direccion == "derecha":
-            anticipacion_x += anticipacion_distancia
-        elif direccion == "izquierda":
-            anticipacion_x -= anticipacion_distancia
-        elif direccion == "arriba":
-            anticipacion_y -= anticipacion_distancia
-        elif direccion == "abajo":
-            anticipacion_y += anticipacion_distancia
+            # Ajustar la posición anticipada según la dirección de Pac-Man
+            anticipacion_distancia = 4  # Distancia en tiles que Pinky intentará anticipar
+            if direccion == "derecha":
+                anticipacion_x += anticipacion_distancia
+            elif direccion == "izquierda":
+                anticipacion_x -= anticipacion_distancia
+            elif direccion == "arriba":
+                anticipacion_y -= anticipacion_distancia
+            elif direccion == "abajo":
+                anticipacion_y += anticipacion_distancia
 
-        # Verificar si el camino anticipado está disponible y cerca de Pac-Man
-        camino_anticipado = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
-                                      (round(anticipacion_x), round(anticipacion_y)))
+            # Verificar si el camino anticipado está disponible y cerca de Pac-Man
+            camino_anticipado = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
+                                          (round(anticipacion_x), round(anticipacion_y)))
 
-        # Si el camino anticipado no es viable o está lejos, ir directamente hacia Pac-Man
-        if len(camino_anticipado) <= 1 or len(camino_anticipado) > anticipacion_distancia + 3:
-            # Seguir a Pac-Man directamente
-            camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
-                               (round(pacman_posicion.get_x()), round(pacman_posicion.get_y())))
-        else:
-            # Usar el camino anticipado para interceptar
-            camino = camino_anticipado
-
-        # Control de movimiento y velocidad
-        movimiento = self.velocidad * delta_time
-        if len(camino) > 1:
-            siguiente_x, siguiente_y = camino[1]
-            distancia_x = siguiente_x - self.posicion_inicial.get_x()
-            distancia_y = siguiente_y - self.posicion_inicial.get_y()
-
-            # Movimiento en la dirección del siguiente paso
-            if abs(distancia_x) > abs(distancia_y):
-                desplazamiento = movimiento if distancia_x > 0 else -movimiento
-                self.posicion_inicial.set_x(self.posicion_inicial.get_x() + desplazamiento)
-                self._direccion = "derecha" if distancia_x > 0 else "izquierda"
+            # Si el camino anticipado no es viable o está lejos, ir directamente hacia Pac-Man
+            if len(camino_anticipado) <= 1 or len(camino_anticipado) > anticipacion_distancia + 3:
+                # Seguir a Pac-Man directamente
+                camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
+                                   (round(pacman_posicion.get_x()), round(pacman_posicion.get_y())))
             else:
-                desplazamiento = movimiento if distancia_y > 0 else -movimiento
-                self.posicion_inicial.set_y(self.posicion_inicial.get_y() + desplazamiento)
-                self._direccion = "abajo" if distancia_y > 0 else "arriba"
+                # Usar el camino anticipado para interceptar
+                camino = camino_anticipado
 
-    def _mover_hacia(self, objetivo , grafo, delta_time):
-        super()._mover_hacia(objetivo)
+            # Control de movimiento y velocidad
+            movimiento = self.velocidad * delta_time
+            if len(camino) > 1:
+                siguiente_x, siguiente_y = camino[1]
+                distancia_x = siguiente_x - self.posicion_inicial.get_x()
+                distancia_y = siguiente_y - self.posicion_inicial.get_y()
+
+                # Movimiento en la dirección del siguiente paso
+                if abs(distancia_x) > abs(distancia_y):
+                    desplazamiento = movimiento if distancia_x > 0 else -movimiento
+                    self.posicion_inicial.set_x(self.posicion_inicial.get_x() + desplazamiento)
+                    self._direccion = "derecha" if distancia_x > 0 else "izquierda"
+                else:
+                    desplazamiento = movimiento if distancia_y > 0 else -movimiento
+                    self.posicion_inicial.set_y(self.posicion_inicial.get_y() + desplazamiento)
+                    self._direccion = "abajo" if distancia_y > 0 else "arriba"
 
 
-    def draw(self, screen):
+
+
+
+    def draw_persecucion(self, screen):
         # Selecciona las imágenes de movimiento según la dirección
         if self._direccion == "izquierda":
             image_frame_1 = "tile132.png"

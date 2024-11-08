@@ -1,6 +1,4 @@
 import os
-import threading
-from pacman.main.py.logic.Posicion import Posicion
 import pygame
 # Obtener la ruta absoluta del directorio raíz del proyecto (subiendo más niveles)
 current_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -70,6 +68,28 @@ class Pacman:
     def colision_pildora(self, duracion):
         """Activa el modo asustado en el laberinto para los fantasmas durante la duración de la pildora."""
         self.laberinto.activar_modo_asustado(duracion)
+
+    def colision_fantasma(self, fantasma):
+        # Obtener la posición de fantasma en la cuadrícula
+        fantasma_x = fantasma.get_posicion().get_x()  # Coordenada X en la cuadrícula
+        fantasma_y = fantasma.get_posicion().get_y()  # Coordenada Y en la cuadrícula
+        # Obtener la posición del objeto (Pacdot o Fruta) en la cuadrícula
+        objeto_x = self.posicion.get_x()  # Coordenada X del objeto en la cuadrícula
+        objeto_y = self.posicion.get_y()  # Coordenada Y del objeto en la cuadrícula
+        # Imprimir las posiciones de Pac-Man y el objeto
+        # Definir una tolerancia en la distancia (por ejemplo, 1 celda de diferencia)
+        tolerancia = 1  # Puedes ajustar la tolerancia según el tamaño de las celdas
+
+        # Verificar si Pac-Man está en una posición cercana (dentro de la tolerancia)
+        if abs(fantasma_x - objeto_x) <= tolerancia and abs(fantasma_y - objeto_y) <= tolerancia:
+            if self.modo == MODO_NORMAL:
+             self.vidas -=1
+             self.punto =0
+             self.laberinto.reiniciar_laberinto()
+            else:
+                fantasma.colision_Pacman()
+
+
 
 
 
