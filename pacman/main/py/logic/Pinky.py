@@ -24,7 +24,7 @@ class Pinky(Fantasma):
         direccion = pacman_posicion.get_direccion()  # Dirección de Pac-Man
 
         # Ajustar la posición anticipada según la dirección de Pac-Man
-        anticipacion_distancia = 4  # Espacios de anticipación
+        anticipacion_distancia = 4  # Distancia en tiles que Pinky intentará anticipar
         if direccion == "derecha":
             anticipacion_x += anticipacion_distancia
         elif direccion == "izquierda":
@@ -34,9 +34,18 @@ class Pinky(Fantasma):
         elif direccion == "abajo":
             anticipacion_y += anticipacion_distancia
 
-        # Encuentra el camino hacia la posición anticipada
-        camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
-                           (round(anticipacion_x), round(anticipacion_y)))
+        # Verificar si hay un camino al punto anticipado
+        camino_anticipado = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
+                                      (round(anticipacion_x), round(anticipacion_y)))
+
+        # Si no hay camino anticipado o está muy lejos, ir directamente hacia Pac-Man
+        if len(camino_anticipado) <= 1 or len(camino_anticipado) > anticipacion_distancia + 2:
+            # No hay camino válido o es inalcanzable, seguir a Pac-Man directamente
+            camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
+                               (round(pacman_posicion.get_x()), round(pacman_posicion.get_y())))
+        else:
+            # Usar el camino anticipado
+            camino = camino_anticipado
 
         # Control de movimiento y velocidad
         movimiento = self.velocidad * delta_time
