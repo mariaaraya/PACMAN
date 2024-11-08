@@ -23,25 +23,66 @@ class Inky(Fantasma):
             # Calcula el objetivo reflejando la posición de Pac-Man en relación con Blinky
             objetivo_x = pacman_posicion.get_x() + 2 * (self.blinky.get_posicion().get_x() - pacman_posicion.get_x())
             objetivo_y = pacman_posicion.get_y() + 2 * (self.blinky.get_posicion().get_y() - pacman_posicion.get_y())
-            objetivo = Posicion(objetivo_x, objetivo_y)
+
+            # Verifica si el objetivo está en una posición libre
+            if grafo.es_posicion_libre(objetivo_x, objetivo_y):
+                objetivo = Posicion(objetivo_x, objetivo_y)
+            else:
+                # Si el objetivo está bloqueado, establece otro objetivo (por ejemplo, Pac-Man)
+                objetivo = pacman_posicion
+
+            # Imprimir el objetivo calculado para depuración
+            print(f"Objetivo calculado: ({objetivo.get_x()}, {objetivo.get_y()})")
 
             # Obtiene el camino hacia el objetivo usando BFS
-            camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
-                               (round(objetivo.get_x()), round(objetivo.get_y())))
+            camino = grafo.bfs(
+                (round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
+                (round(objetivo.get_x()), round(objetivo.get_y()))
+            )
+
+            # Imprimir el camino generado para depuración
+            print(f"Camino generado: {camino}")
 
             # Establece la velocidad del fantasma (más lenta que la de Pac-Man)
             movimiento = self.velocidad * delta_time
+            print(f"Movimiento calculado: {movimiento}")
 
-            # Verifica si hay un camino y un siguiente paso
+            # Verifica si el camino tiene más de 1 punto
             if len(camino) > 1:
-                # Establece el siguiente paso como objetivo temporal
-                self.objetivo = camino[1]  # Actualiza el objetivo al siguiente nodo en el camino
+                siguiente_x, siguiente_y = camino[1]
+                # Verifica si el siguiente paso es válido (no es una pared)
+                if grafo.es_posicion_libre(siguiente_x, siguiente_y):
+                    self.objetivo = (siguiente_x, siguiente_y)
 
-                # Calcular la distancia en cada eje
+                    # Calcular la distancia en cada eje
+                    distancia_x = self.objetivo[0] - self.posicion_inicial.get_x()
+                    distancia_y = self.objetivo[1] - self.posicion_inicial.get_y()
+
+                    # Mueve hacia el siguiente paso
+                    if abs(distancia_x) > abs(distancia_y):
+                        self.posicion_inicial.set_x(
+                            self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento)
+                        )
+                        self._direccion = "derecha" if distancia_x > 0 else "izquierda"
+                    else:
+                        self.posicion_inicial.set_y(
+                            self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento)
+                        )
+                        self._direccion = "abajo" if distancia_y > 0 else "arriba"
+
+                    # Imprimir la dirección actual y la posición actual para depuración
+                    print("Dirección:", self._direccion)
+                    print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
+            else:
+                # Si no hay camino, mueve directamente a Pac-Man (en el caso de que sea necesario)
+                print("No se encontró un camino, moviendo hacia Pac-Man")
+                self.objetivo = (pacman_posicion.get_x(), pacman_posicion.get_y())
+
+                # Continuar con el movimiento hacia Pac-Man si es necesario
                 distancia_x = self.objetivo[0] - self.posicion_inicial.get_x()
                 distancia_y = self.objetivo[1] - self.posicion_inicial.get_y()
 
-                # Mueve hacia el siguiente paso
+                # Movimiento hacia Pac-Man
                 if abs(distancia_x) > abs(distancia_y):
                     self.posicion_inicial.set_x(
                         self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento)
@@ -53,12 +94,8 @@ class Inky(Fantasma):
                     )
                     self._direccion = "abajo" if distancia_y > 0 else "arriba"
 
-                # Actualiza la posición final en el siguiente paso
-                self.posicion_inicial.set_x(self.objetivo[0])
-                self.posicion_inicial.set_y(self.objetivo[1])
-
-                # Imprimir la dirección actual y la posición actual para depuración
-                print("Dirección:", self._direccion)
+                # Imprimir la dirección y posición cuando se mueve hacia Pac-Man
+                print("Dirección hacia Pac-Man:", self._direccion)
                 print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
         else:
             print("Error: Blinky no está correctamente inicializado.")

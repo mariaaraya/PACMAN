@@ -14,6 +14,7 @@ class Blinky(Fantasma):
         super().__init__("rojo",posicion_inicial,1, velocidad)
         self.square_size = square
         self.velocidad=velocidad
+
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
         # Obtén el camino hacia Pac-Man usando BFS
         camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),

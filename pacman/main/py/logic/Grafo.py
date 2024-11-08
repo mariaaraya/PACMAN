@@ -61,7 +61,8 @@ class Grafo:
         print(f"No se encontró un camino entre {inicio} y {objetivo}.")
         return []
 
-    def es_celda_vacia(self, x, y):
-        x = int(x)  # Asegúrate de que x sea un entero
-        y = int(y)  # Asegúrate de que y sea un entero
-        return self.laberinto[y][x] != 3  # Retorna True si la celda no es una pared (3)
+    def es_posicion_libre(self, x, y):
+        # Verifica si la posición (x, y) es libre en el laberinto (es decir, no es una pared)
+        if 0 <= y < len(self.laberinto) and 0 <= x < len(self.laberinto[0]):
+            return self.laberinto[y][x] != 3  # Asumiendo que 3 representa una pared
+        return False
