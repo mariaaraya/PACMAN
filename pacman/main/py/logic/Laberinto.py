@@ -132,7 +132,6 @@ class Laberinto:
         for fila in self.laberinto:
             for celda in fila:
                 if celda == 2 or celda == 6:  # Aún quedan elementos por recolectar
-                    print(f"Elemento restante en la matriz: {celda}")
                     return False
         return True  # No quedan más elementos
 
@@ -154,7 +153,7 @@ class Laberinto:
         y = posicion.get_y()
         # Cambiar el valor de la matriz a 1
         self.laberinto[y][x] = 1
-        print(f"Matriz actualizada en posición ({x}, {y})")
+
 
     def actualizar_matriz(self, posicion):
         """Actualiza la matriz para indicar que la posición dada está vacía (1)."""
@@ -163,7 +162,7 @@ class Laberinto:
         y = posicion.get_y() // self.square_size
         # Cambiar el valor de la matriz a 1
         self.laberinto[y][x] = 1
-        print(f"Matriz actualizada en posición ({x}, {y})")
+
 
 
     def agregar_elementos(self):
@@ -198,16 +197,16 @@ class Laberinto:
                 elif cell_value == 4:  # Fantasmas
                     # Agregar cada fantasma solo si no ha sido agregado ya
                     if not blinky_added:
-                        self.fantasmas.append(Blinky(Posicion(col, row), self.square_size,4))
+                        #self.fantasmas.append(Blinky(Posicion(col, row), self.square_size,4))
                         blinky_added = True
                     elif not clyde_added:
-                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 4,4))
+                        #self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 4,4))
                         clyde_added = True
                     elif not inky_added:
                         self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 4, self.blinky))
                         inky_added = True
                     elif not pinky_added:
-                        self.fantasmas.append(Pinky(Posicion(col, row), self.square_size, 4))
+                        #self.fantasmas.append(Pinky(Posicion(col, row), self.square_size, 4))
                         pinky_added = True
 
     def draw(self):
@@ -325,7 +324,7 @@ class Laberinto:
                                         fruta = self.crear_fruta_segun_nivel(self.nivel, posicion_fruta)
                                         self.elementos.agregar_elemento(fruta)  # Agregar la fruta al SistemaHashing
                                         fruta_creada = True  # Marcar que ya se creó la fruta en este nivel
-                                        print(f"Fruta creada en la posición {posicion_fruta}")
+
 
                         if juego_empezado:
                             tiempo_actual = pygame.time.get_ticks()

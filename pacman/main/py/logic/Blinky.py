@@ -51,23 +51,48 @@ class Blinky(Fantasma):
             print("Dirección:", self._direccion)
             print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
 
-    def _mover_hacia(self, objetivo):
-        # Lógica para mover al fantasma hacia el objetivo (Pac-Man)
-        if self.posicion_inicial.get_x() < objetivo.get_x():
-            self.posicion_inicial.set_x(self.posicion_inicial.get_x() + self.velocidad)
-        elif self.posicion_inicial.get_x() > objetivo.get_x():
-            self.posicion_inicial.set_x(self.posicion_inicial.get_x() - self.velocidad)
 
-        if self.posicion_inicial.get_y() < objetivo.get_y():
-            self.posicion_inicial.set_y(self.posicion_inicial.get_y() + self.velocidad)
-        elif self.posicion_inicial.get_y() > objetivo.get_y():
-            self.posicion_inicial.set_y(self.posicion_inicial.get_y() - self.velocidad)
 
     def get_posicion(self):
         # Devuelve la posición actual de Blinky
         return self.posicion_inicial
 
     def draw(self, screen):
+        # Selecciona las imágenes de movimiento según la dirección
+        if self._direccion == "izquierda":
+            image_frame_1 = "tile100.png"
+            image_frame_2 = "tile101.png"
+        elif self._direccion == "derecha":
+            image_frame_1 = "tile096.png"
+            image_frame_2 = "tile097.png"
+        elif self._direccion == "arriba":
+            image_frame_1 = "tile102.png"
+            image_frame_2 = "tile103.png"
+        elif self._direccion == "abajo":
+            image_frame_1 = "tile098.png"
+            image_frame_2 = "tile099.png"
+        else:
+            # Si no hay dirección (por defecto o quieto)
+            image_frame_1 = "tile096.png"
+            image_frame_2 = "tile097.png"
+
+        # Alternar entre las dos imágenes para simular movimiento
+        if self.changeFeetCount % 2 == 0:
+            ghostImage = pygame.image.load(os.path.join(BoardPath, image_frame_1))
+        else:
+            ghostImage = pygame.image.load(os.path.join(BoardPath, image_frame_2))
+
+        self.changeFeetCount += 1
+
+        # Escalar la imagen para adaptarla al tamaño de la celda del laberinto
+        ghostImage = pygame.transform.scale(ghostImage, (int(self.square_size * 0.9), int(self.square_size * 0.9)))
+
+        # Dibujar la imagen en la posición actual de Blinky
+        screen.blit(ghostImage, (self.posicion_inicial.get_x() * self.square_size,
+                                 self.posicion_inicial.get_y() * self.square_size))
+
+
+    def draw_persecucion(self, screen):
         # Selecciona las imágenes de movimiento según la dirección
         if self._direccion == "izquierda":
             image_frame_1 = "tile100.png"

@@ -15,10 +15,36 @@ class Inky(Fantasma):
         super().__init__("cian", posicion_inicial, square,  velocidad)
         self.blinky = blinky  # Referencia a Blinky
         self.square_size=square
-        self.velocidad=velocidad
+        self.first_move_to_target = True
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
-        # Verifica que self.blinky tenga una posición válida
+        if self.first_move_to_target:
+            objetivo_x, objetivo_y = 13, 15
+            objetivo = Posicion(objetivo_x, objetivo_y)
+
+            # Obtener el camino hacia el objetivo inicial
+            camino = grafo.bfs(
+                (round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
+                (round(objetivo.get_x()), round(objetivo.get_y()))
+            )
+
+            # Verifica si ya ha llegado exactamente a [13, 15]
+            if round(self.posicion_inicial.get_x()) == objetivo_x and round(
+                    self.posicion_inicial.get_y()) == objetivo_y:
+                self.first_move_to_target = False  # Desactiva la bandera si ya llegó a (13, 15)
+            elif len(camino) > 1:
+                # Continuar hacia el objetivo inicial [13, 15] si aún no ha llegado
+                siguiente_x, siguiente_y = camino[1]
+                self.posicion_inicial.set_x(siguiente_x)
+                self.posicion_inicial.set_y(siguiente_y)
+
+                # Redondea la posición después del movimiento
+                self.posicion_inicial.set_x(round(self.posicion_inicial.get_x()))
+                self.posicion_inicial.set_y(round(self.posicion_inicial.get_y()))
+
+                return  # Sale de la función para no continuar con la lógica de objetivo normal
+
+                # Verifica que self.blinky tenga una posición válida
         if self.blinky and hasattr(self.blinky, "get_posicion"):
             # Calcula el objetivo reflejando la posición de Pac-Man en relación con Blinky
             objetivo_x = pacman_posicion.get_x() + 2 * (self.blinky.get_posicion().get_x() - pacman_posicion.get_x())
@@ -33,6 +59,7 @@ class Inky(Fantasma):
 
             # Imprimir el objetivo calculado para depuración
             print(f"Objetivo calculado: ({objetivo.get_x()}, {objetivo.get_y()})")
+
 
             # Obtiene el camino hacia el objetivo usando BFS
             camino = grafo.bfs(
@@ -50,26 +77,25 @@ class Inky(Fantasma):
             # Verifica si el camino tiene más de 1 punto
             if len(camino) > 1:
                 siguiente_x, siguiente_y = camino[1]
-                # Verifica si el siguiente paso es válido (no es una pared)
                 if grafo.es_posicion_libre(siguiente_x, siguiente_y):
                     self.objetivo = (siguiente_x, siguiente_y)
-
-                    # Calcular la distancia en cada eje
                     distancia_x = self.objetivo[0] - self.posicion_inicial.get_x()
                     distancia_y = self.objetivo[1] - self.posicion_inicial.get_y()
 
-                    # Mueve hacia el siguiente paso
                     if abs(distancia_x) > abs(distancia_y):
                         self.posicion_inicial.set_x(
-                            self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento)
-                        )
+                            self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento))
                         self._direccion = "derecha" if distancia_x > 0 else "izquierda"
                     else:
                         self.posicion_inicial.set_y(
-                            self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento)
-                        )
+                            self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento))
                         self._direccion = "abajo" if distancia_y > 0 else "arriba"
 
+                    # Redondeo solo cuando alcanza la posición objetivo en el camino
+                    if round(self.posicion_inicial.get_x()) == self.objetivo[0] and round(
+                            self.posicion_inicial.get_y()) == self.objetivo[1]:
+                        self.posicion_inicial.set_x(round(self.posicion_inicial.get_x()))
+                        self.posicion_inicial.set_y(round(self.posicion_inicial.get_y()))
                     # Imprimir la dirección actual y la posición actual para depuración
                     print("Dirección:", self._direccion)
                     print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
@@ -82,17 +108,20 @@ class Inky(Fantasma):
                 distancia_x = self.objetivo[0] - self.posicion_inicial.get_x()
                 distancia_y = self.objetivo[1] - self.posicion_inicial.get_y()
 
-                # Movimiento hacia Pac-Man
+                # Mueve hacia el siguiente paso
                 if abs(distancia_x) > abs(distancia_y):
-                    self.posicion_inicial.set_x(
-                        self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento)
-                    )
+                    nueva_x = self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento)
+                    self.posicion_inicial.set_x(round(nueva_x))  # Redondea la posición en x
                     self._direccion = "derecha" if distancia_x > 0 else "izquierda"
                 else:
-                    self.posicion_inicial.set_y(
-                        self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento)
-                    )
+                    nueva_y = self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento)
+                    self.posicion_inicial.set_y(round(nueva_y))  # Redondea la posición en y
                     self._direccion = "abajo" if distancia_y > 0 else "arriba"
+
+                # Imprimir la dirección actual y la posición actual redondeada para depuración
+                print("Dirección:", self._direccion)
+                print("Posición actualizada y redondeada a:", self.posicion_inicial.get_x(),
+                      self.posicion_inicial.get_y())
 
                 # Imprimir la dirección y posición cuando se mueve hacia Pac-Man
                 print("Dirección hacia Pac-Man:", self._direccion)

@@ -42,3 +42,10 @@ class Fantasma (ABC):
         """Método  para dibijar el elemento."""
         pass
 
+    def draw_persecucion(self, screen):
+        """Método  para dibijar el elemento."""
+        pass
+
+
+
+
