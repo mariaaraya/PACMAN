@@ -26,19 +26,19 @@ class AtajoLaberinto(ElementoJuego):
 
         # Verificar si Pac-Man colisiona con el atajo izquierdo
         if pacman_x == atajo_izquierdo_x and pacman_y == atajo_izquierdo_y:
-            print("Entró en el atajo izquierdo.")
+
             # Si está en el atajo izquierdo, teletransportarlo al atajo derecho
             pacman.colision_atajo(Posicion(atajo_derecho_x, atajo_derecho_y))
             pacman.ultimo_teletransporte = tiempo_actual  # Actualizar el tiempo del teletransporte
-            print("Pac-Man se teletransportó al atajo derecho.")
+
             return True
         # Verificar si Pac-Man colisiona con el atajo derecho
         elif pacman_x == atajo_derecho_x and pacman_y == atajo_derecho_y:
-            print("Entró en el atajo derecho.")
+
             # Si está en el atajo derecho, teletransportarlo al atajo izquierdo
             pacman.colision_atajo(Posicion(atajo_izquierdo_x, atajo_izquierdo_y))
             pacman.ultimo_teletransporte = tiempo_actual  # Actualizar el tiempo del teletransporte
-            print("Pac-Man se teletransportó al atajo izquierdo.")
+
             return True
         return False
 

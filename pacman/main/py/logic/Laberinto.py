@@ -78,6 +78,7 @@ class Laberinto:
         self.max_nivel = 3  # Número máximo de niveles
         self.laberinto_original = copy.deepcopy(self.laberinto)
 
+
     def obtener_matriz(self):
         return self.laberinto
 
@@ -144,9 +145,11 @@ class Laberinto:
 
     def reiniciar_laberinto(self):
         """Reinicia el laberinto para el siguiente nivel."""
+
         self.pacman.set_posicion(Posicion(14, 26))
         self.laberinto = copy.deepcopy(self.laberinto_original)  # Reiniciar el laberinto con una copia profunda
         self.agregar_elementos()  # Reagregar los elementos del laberinto
+
 
     def imprimir_elementos_restantes(self):
         """Imprime los elementos restantes en el sistema de hashing para debug."""
@@ -166,14 +169,10 @@ class Laberinto:
         """Avanza al siguiente nivel si es posible."""
         if self.nivel < self.max_nivel:
             self.nivel += 1
-            print(f"¡Nivel completado! Ahora en el nivel {self.nivel}")
+
             for fantasma in self.fantasmas:
                 fantasma.velocidad += 1
             self.reiniciar_laberinto()  # Reiniciar el laberinto para el siguiente nivel
-        else:
-            print("¡Has completado todos los niveles! Fin del juego.")
-            pygame.quit()
-            exit()  # Cerrar completamente el juego al terminar todos los niveles
 
     def actualizar_matrizfruta(self, posicion):
         """Actualiza la matriz para indicar que la posición dada está vacía (1)."""
@@ -221,7 +220,7 @@ class Laberinto:
                     pacdot = Pacdot(Posicion(x, y), 'Pacdot')
                     self.elementos.agregar_elemento(pacdot)
                 elif cell_value == 6:  # Pildora de Poder (especial)
-                    pildora_poder = PildoraPoder(Posicion(x, y), 'PildoraPoder', 10)
+                    pildora_poder = PildoraPoder(Posicion(x, y), 'PildoraPoder', 15)
                     self.elementos.agregar_elemento(pildora_poder)
                 elif cell_value == 4:  # Fantasmas
                     # Agregar cada fantasma solo si no ha sido agregado ya
@@ -283,6 +282,7 @@ class Laberinto:
         self.pacman.draw(self.screen)
 
     def run(self):
+        #fruta = Fruta(Posicion(0, 1),"", 15, "", self.square_size)
         pygame.init()
         clock = pygame.time.Clock()
         # Crear el menú de inicio con la imagen de fondo
@@ -317,7 +317,7 @@ class Laberinto:
                 tiempo_inicio_juego = 0  # Variable para almacenar el tiempo de inicio
 
                 # Configurar el temporizador para crear la fruta después de 5 segundos
-                pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
+                pygame.time.set_timer(pygame.USEREVENT + 1, 15000)
 
                 # Configurar la fuente para mostrar el puntaje y las vidas
                 font = pygame.font.SysFont(None, 30)
@@ -369,6 +369,10 @@ class Laberinto:
                                     menu_active = True  # Regresar al menú principal
                                     juego_empezado = False
                                     direccion_actual = None
+                                    self.pacman.set_vidas(3)
+                                    self.pacman.set_punto(0)
+                                    if fruta_creada:
+                                     self.elementos.eliminar_elemento(fruta.get_key())
                                     break  # Salir del ciclo para mostrar el menú
 
                             if self.verificar_nivel_completado():
@@ -378,6 +382,9 @@ class Laberinto:
                                 if self.nivel > self.max_nivel:
                                     print("Juego completado. Volviendo al menú principal.")
                                     menu_active = True
+                                    self.pacman.set_vidas(3)
+                                    self.pacman.set_punto(0)
+
                                     juego_empezado = False
                                     direccion_actual = None
                                     break

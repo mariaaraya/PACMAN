@@ -30,13 +30,6 @@ class Clyde(Fantasma):
         dy = pacman_posicion.get_y() - self.posicion_inicial.get_y()
         distancia_a_pacman = (dx ** 2 + dy ** 2) ** 0.5
 
-        # Verificar si Clyde está en modo dispersión y ha llegado a su posición inicial
-        if self.modo == self.MODO_DISPERSION and (
-                round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())) == (
-                round(self.posicion_aux.get_x()), round(self.posicion_aux.get_y())):
-            # Cambiar el modo de Clyde
-            self.modo = self.MODO_ASUSTADO if random.choice([True, False]) else self.MODO_PERSECUCION
-
 
         # Cambia el estado según la distancia a Pac-Man y el contador de frames
         self.contador_frames += 1
@@ -79,7 +72,7 @@ class Clyde(Fantasma):
         elif self.estado_actual == "alejarse":
             self.objetivo_aleatorio = self.generar_posicion_aleatoria(grafo)
 
-        print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
+
 
 
     def camino_valido(self, grafo, objetivo):

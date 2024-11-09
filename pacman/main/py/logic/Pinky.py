@@ -1,4 +1,5 @@
 import os
+import random
 
 import pygame
 
@@ -22,6 +23,7 @@ class Pinky(Fantasma):
 
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
+
             # Calcular el objetivo adelantado en la dirección de Pac-Man
             anticipacion_x = pacman_posicion.get_x()
             anticipacion_y = pacman_posicion.get_y()

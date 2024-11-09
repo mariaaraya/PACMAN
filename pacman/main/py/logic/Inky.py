@@ -1,4 +1,5 @@
 import os
+import random
 
 import pygame
 
@@ -15,7 +16,6 @@ class Inky(Fantasma):
         super().__init__("cian", posicion_inicial, square,  velocidad)
         self.blinky = blinky  # Referencia a Blinky
         self.square_size=square
-        self.first_move_to_target = True
 
 
 
@@ -44,7 +44,6 @@ class Inky(Fantasma):
                     # Redondea la posición después del movimiento
                     self.posicion_inicial.set_x(round(self.posicion_inicial.get_x()))
                     self.posicion_inicial.set_y(round(self.posicion_inicial.get_y()))
-                    print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
                     return
 
                     # Verifica que self.blinky tenga una posición válida
@@ -62,8 +61,6 @@ class Inky(Fantasma):
                     # Si el objetivo está bloqueado, establece otro objetivo (por ejemplo, Pac-Man)
                     objetivo = pacman_posicion
 
-                # Imprimir el objetivo calculado para depuración
-                print(f"Objetivo calculado: ({objetivo.get_x()}, {objetivo.get_y()})")
 
                 # Obtiene el camino hacia el objetivo usando BFS
                 camino = grafo.bfs(
@@ -71,12 +68,9 @@ class Inky(Fantasma):
                     (round(objetivo.get_x()), round(objetivo.get_y()))
                 )
 
-                # Imprimir el camino generado para depuración
-                print(f"Camino generado: {camino}")
 
                 # Establece la velocidad del fantasma (más lenta que la de Pac-Man)
                 movimiento = self.velocidad * delta_time
-                print(f"Movimiento calculado: {movimiento}")
 
                 # Verifica si el camino tiene más de 1 punto
                 if len(camino) > 1:
@@ -100,12 +94,9 @@ class Inky(Fantasma):
                                 self.posicion_inicial.get_y()) == self.objetivo[1]:
                             self.posicion_inicial.set_x(round(self.posicion_inicial.get_x()))
                             self.posicion_inicial.set_y(round(self.posicion_inicial.get_y()))
-                        # Imprimir la dirección actual y la posición actual para depuración
-                        print("Dirección:", self._direccion)
-                        print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
                 else:
-                    # Si no hay camino, mueve directamente a Pac-Man (en el caso de que sea necesario)
-                    print("No se encontró un camino, moviendo hacia Pac-Man")
+
+
                     self.objetivo = (pacman_posicion.get_x(), pacman_posicion.get_y())
 
                     # Continuar con el movimiento hacia Pac-Man si es necesario
@@ -122,22 +113,10 @@ class Inky(Fantasma):
                         self.posicion_inicial.set_y(round(nueva_y))  # Redondea la posición en y
                         self._direccion = "abajo" if distancia_y > 0 else "arriba"
 
-                    # Imprimir la dirección actual y la posición actual redondeada para depuración
-                    print("Dirección:", self._direccion)
-                    print("Posición actualizada y redondeada a:", self.posicion_inicial.get_x(),
-                          self.posicion_inicial.get_y())
 
-                    # Imprimir la dirección y posición cuando se mueve hacia Pac-Man
-                    print("Dirección hacia Pac-Man:", self._direccion)
-                    print("Posición actualizada a:", self.posicion_inicial.get_x(), self.posicion_inicial.get_y())
             else:
                 print("Error: Blinky no está correctamente inicializado.")
 
-    def colision_Pacman(self):
-        """Reinicia la posición de Blinky al colisionar con Pac-Man y establece un retraso antes de moverse."""
-        self.posicion_actual = self.posicion_inicial
-        self.en_colision = True
-        self.inicio_colision = pygame.time.get_ticks()  # Tiempo de inicio de espera
 
 
     def draw_persecucion(self, screen):

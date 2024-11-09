@@ -17,14 +17,13 @@ class Grafo:
         for y, fila in enumerate(self.laberinto):
             for x, celda in enumerate(fila):
                 # Definir posiciones específicas que queremos incluir aunque sean paredes
-                posiciones_especiales = [(13, 15)]
+                posiciones_especiales = [(13, 15),( 0, 17),( 27, 17)]
                 posicion = (x, y)
 
                 # Agregar vértice si no es pared o si es una posición especial
                 if celda != 3 or posicion in posiciones_especiales:
                     self.agregar_vertice(posicion)
-                    if posicion in posiciones_especiales:
-                        print(f"Nodo {posicion} añadido al grafo como posición especial.")
+
 
                     # Crear aristas para posiciones adyacentes sin paredes o posiciones especiales
                     for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
@@ -33,8 +32,7 @@ class Grafo:
                                 0 <= adyacente[0] < len(self.laberinto[0]) and \
                                 (self.laberinto[adyacente[1]][adyacente[0]] != 3 or adyacente in posiciones_especiales):
                             self.agregar_arista(posicion, adyacente)
-                            if posicion in posiciones_especiales:
-                                print(f"Arista añadida entre {posicion} y {adyacente}")
+
 
     def obtener_limites(self):
         max_x = len(self.laberinto[0]) - 1  # Máximo índice de columna
@@ -43,7 +41,6 @@ class Grafo:
     
     def bfs(self, inicio, objetivo):
         if inicio not in self.vertices or objetivo not in self.vertices:
-            print(f"Uno de los puntos {inicio} o {objetivo} no está en el grafo.")
             return []
 
         visitados = {inicio}
@@ -58,7 +55,6 @@ class Grafo:
                 if vecino not in visitados:
                     visitados.add(vecino)
                     cola.append((vecino, camino + [vecino]))
-        print(f"No se encontró un camino entre {inicio} y {objetivo}.")
         return []
 
     def es_posicion_libre(self, x, y):
