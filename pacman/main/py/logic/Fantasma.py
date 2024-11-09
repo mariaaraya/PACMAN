@@ -1,5 +1,6 @@
 import copy
 import os
+import time
 from abc import ABC, abstractmethod
 import random
 
@@ -31,12 +32,60 @@ class Fantasma (ABC):
         self.inicio_colision = None  # Almacena el tiempo de inicio de colisión
         self.en_colision = False  # Bandera para verificar si está en colisión
         self.first_move_to_target = True
+
+
     def actualizar_modo(self, nuevo_modo):
         self.modo = nuevo_modo
 
     def get_posicion(self):
-        # Devuelve la posición actual de Blinky
-        return self.posicion_inicial
+       return self.posicion_inicial
+
+    def colision_Pacman(self):
+        """Cambia el modo del fantasma a dispersión al colisionar con Pac-Man en modo persecución."""
+        self.modo = self.MODO_DISPERSION
+
+
+    def mover_posicon_inical(self, grafo, delta_time):
+        if self.modo == self.MODO_DISPERSION and (
+                round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())) == (
+                round(self.posicion_aux.get_x()), round(self.posicion_aux.get_y())):
+            # Cambia a MODO_PERSECUCION cuando alcance la posición inicial
+            self.modo = self.MODO_PERSECUCION
+
+            return
+
+            # Obtén el camino hacia Pac-Man usando BFS
+        camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
+                           (round(self.posicion_aux.get_x()), round(self.posicion_aux.get_y())))
+        # Imprime el camino completo para depuración
+
+
+        movimiento = self.velocidad * delta_time
+
+        # Verifica si hay un camino y un siguiente paso
+        if len(camino) > 1:
+            # Establece el siguiente paso como objetivo temporal
+            self.objetivo = camino[1]  # Actualiza el objetivo al siguiente nodo en el camino
+            # Calcular la distancia en cada eje
+            distancia_x = self.objetivo[0] - self.posicion_inicial.get_x()
+            distancia_y = self.objetivo[1] - self.posicion_inicial.get_y()
+
+            # Definir la dirección en función del siguiente paso
+            # Movimiento gradual hacia el objetivo según la velocidad
+            if abs(distancia_x) > abs(distancia_y):
+                self.posicion_inicial.set_x(
+                    self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento))
+                self._direccion = "derecha" if distancia_x > 0 else "izquierda"
+            else:
+                self.posicion_inicial.set_y(
+                    self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento))
+                self._direccion = "abajo" if distancia_y > 0 else "arriba"
+
+            # Mueve directamente al siguiente paso
+            self.posicion_inicial.set_x(self.objetivo[0])
+            self.posicion_inicial.set_y(self.objetivo[1])
+            self.first_move_to_target = True
+
 
     def mover(self, pacman_posicion , grafo, delta_time):
         if self.modo == self.MODO_PERSECUCION:
@@ -46,9 +95,10 @@ class Fantasma (ABC):
         elif self.modo == self.MODO_ASUSTADO:
             self.mover_aleatoriamente(grafo, delta_time)  # Implementa este método
 
-    def colision_Pacman(self):
-        """Reinicia la posición de Blinky al colisionar con Pac-Man y establece un retraso antes de moverse."""
-        self.modo =  "dispersión"
+
+
+
+
 
 
     def mover_aleatoriamente(self, grafo, delta_time):
@@ -157,43 +207,6 @@ class Fantasma (ABC):
         screen.blit(ghostImage, (self.posicion_inicial.get_x() * self.square_size,
                                  self.posicion_inicial.get_y() * self.square_size))
 
-    def mover_posicon_inical(self, grafo, delta_time):
-        if self.modo == self.MODO_DISPERSION and (
-                round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())) == (
-                round(self.posicion_aux.get_x()), round(self.posicion_aux.get_y())):
-            self.modo = self.MODO_ASUSTADO if random.choice([True, False]) else self.MODO_PERSECUCION
-
-        # Obtén el camino hacia Pac-Man usando BFS
-        camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
-                           (round(self.posicion_aux.get_x()), round(self.posicion_aux.get_y())))
-        # Imprime el camino completo para depuración
-
-
-        movimiento = self.velocidad * delta_time
-
-        # Verifica si hay un camino y un siguiente paso
-        if len(camino) > 1:
-            # Establece el siguiente paso como objetivo temporal
-            self.objetivo = camino[1]  # Actualiza el objetivo al siguiente nodo en el camino
-            # Calcular la distancia en cada eje
-            distancia_x = self.objetivo[0] - self.posicion_inicial.get_x()
-            distancia_y = self.objetivo[1] - self.posicion_inicial.get_y()
-
-            # Definir la dirección en función del siguiente paso
-            # Movimiento gradual hacia el objetivo según la velocidad
-            if abs(distancia_x) > abs(distancia_y):
-                self.posicion_inicial.set_x(
-                    self.posicion_inicial.get_x() + (movimiento if distancia_x > 0 else -movimiento))
-                self._direccion = "derecha" if distancia_x > 0 else "izquierda"
-            else:
-                self.posicion_inicial.set_y(
-                    self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento))
-                self._direccion = "abajo" if distancia_y > 0 else "arriba"
-
-            # Mueve directamente al siguiente paso
-            self.posicion_inicial.set_x(self.objetivo[0])
-            self.posicion_inicial.set_y(self.objetivo[1])
-            self.first_move_to_target = True
 
 
     def draw_asustado(self, screen):

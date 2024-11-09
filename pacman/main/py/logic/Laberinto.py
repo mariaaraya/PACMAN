@@ -145,7 +145,10 @@ class Laberinto:
 
     def reiniciar_laberinto(self):
         """Reinicia el laberinto para el siguiente nivel."""
-
+        # Eliminar cualquier fruta existente
+        frutas = [elemento for elemento in self.elementos.obtener_todos_los_elementos() if isinstance(elemento, Fruta)]
+        for fruta in frutas:
+            self.elementos.eliminar_elemento(fruta.get_key())  # Eliminar la fruta del sistema de hashing
         self.pacman.set_posicion(Posicion(14, 26))
         self.laberinto = copy.deepcopy(self.laberinto_original)  # Reiniciar el laberinto con una copia profunda
         self.agregar_elementos()  # Reagregar los elementos del laberinto

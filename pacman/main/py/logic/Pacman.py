@@ -82,12 +82,13 @@ class Pacman:
 
         # Verificar si Pac-Man está en una posición cercana (dentro de la tolerancia)
         if abs(fantasma_x - objeto_x) <= tolerancia and abs(fantasma_y - objeto_y) <= tolerancia:
-            if self.modo == MODO_NORMAL:
-             self.vidas -=1
-             self.punto =0
-             self.laberinto.reiniciar_laberinto()
+            if self.modo == MODO_NORMAL or fantasma.modo == MODO_PERSECUCION:
+                self.vidas -= 1
+                self.punto = 0
+                self.laberinto.reiniciar_laberinto()
             else:
                 fantasma.colision_Pacman()
+
 
 
 
