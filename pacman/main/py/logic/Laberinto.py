@@ -231,18 +231,18 @@ class Laberinto:
                 elif cell_value == 4:  # Fantasmas
                     # Agregar cada fantasma solo si no ha sido agregado ya
                     if not blinky_added:
-                        #self.fantasmas.append(Blinky(Posicion(col, row), self.square_size,4))
+                        self.fantasmas.append(Blinky(Posicion(col, row), self.square_size,4))
                         blinky_added = True
                     elif not clyde_added:
-                        #self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 4,4))
+                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 4,4))
                         clyde_added = True
                     elif not inky_added:
 
-                        #self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 4, self.blinky))
+                        self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 4, self.blinky))
 
                         inky_added = True
                     elif not pinky_added:
-                        #self.fantasmas.append(Pinky(Posicion(col, row), self.square_size, 4))
+                        self.fantasmas.append(Pinky(Posicion(col, row), self.square_size, 4))
                         pinky_added = True
 
     def draw(self):
