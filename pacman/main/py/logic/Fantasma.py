@@ -95,10 +95,9 @@ class Fantasma (ABC):
         elif self.modo == self.MODO_ASUSTADO:
             self.mover_aleatoriamente(grafo, delta_time)  # Implementa este método
 
-
-
-
-
+    def reiniciar_posicion(self):
+        """Restablece la posición del fantasma a su posición inicial."""
+        self.posicion_inicial = copy.deepcopy(self.posicion_aux)
 
 
     def mover_aleatoriamente(self, grafo, delta_time):

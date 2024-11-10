@@ -87,6 +87,7 @@ class Pacman:
                 self.punto = 0
                 self.laberinto.reiniciar_laberinto()
             else:
+                self.punto+=200
                 fantasma.colision_Pacman()
 
 

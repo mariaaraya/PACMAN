@@ -77,7 +77,8 @@ class Laberinto:
         self.nivel = 1  # Nivel actual del juego
         self.max_nivel = 3  # Número máximo de niveles
         self.laberinto_original = copy.deepcopy(self.laberinto)
-
+        self.laberinto_backup = copy.deepcopy(self.laberinto)  # Crea una copia de respaldo inicial
+        self.agregar_elementos()
 
     def obtener_matriz(self):
         return self.laberinto
@@ -143,16 +144,22 @@ class Laberinto:
             return random.choice(posiciones_validas)  # Devolver una posición aleatoria
         return None
 
-    def reiniciar_laberinto(self):
-        """Reinicia el laberinto para el siguiente nivel."""
+    """def reiniciar_laberinto(self):
+        Reinicia el laberinto para el siguiente nivel.
         # Eliminar cualquier fruta existente
         frutas = [elemento for elemento in self.elementos.obtener_todos_los_elementos() if isinstance(elemento, Fruta)]
         for fruta in frutas:
             self.elementos.eliminar_elemento(fruta.get_key())  # Eliminar la fruta del sistema de hashing
         self.pacman.set_posicion(Posicion(14, 26))
         self.laberinto = copy.deepcopy(self.laberinto_original)  # Reiniciar el laberinto con una copia profunda
-        self.agregar_elementos()  # Reagregar los elementos del laberinto
+        self.agregar_elementos()  # Reagregar los elementos del laberinto"""
 
+    def reiniciar_laberinto(self):
+        """Reinicia el laberinto para un nuevo nivel."""
+        self.laberinto = copy.deepcopy(self.laberinto_original)  # Estado inicial del nuevo nivel
+        self.laberinto_backup = copy.deepcopy(self.laberinto)  # Actualizamos la copia de respaldo
+        self.pacman.set_posicion(Posicion(14, 26))  # Posición inicial de Pac-Man
+        self.agregar_elementos()  # Reagregar los elementos del laberinto
 
     def imprimir_elementos_restantes(self):
         """Imprime los elementos restantes en el sistema de hashing para debug."""
@@ -185,7 +192,6 @@ class Laberinto:
         # Cambiar el valor de la matriz a 1
         self.laberinto[y][x] = 1
 
-
     def actualizar_matriz(self, posicion):
         """Actualiza la matriz para indicar que la posición dada está vacía (1)."""
         # Convertir la posición a las coordenadas de la matriz
@@ -194,7 +200,19 @@ class Laberinto:
         # Cambiar el valor de la matriz a 1
         self.laberinto[y][x] = 1
 
+    def reiniciar_laberinto2(self):
+        print("Antes de reiniciar laberinto:")
+        print("Estado actual de laberinto:", self.laberinto)
+        print("Respaldo (laberinto_backup):", self.laberinto_backup)
+        """Restaura el laberinto al estado guardado en laberinto_backup."""
+        self.laberinto = copy.deepcopy(self.laberinto_backup)
+        self.pacman.set_posicion(Posicion(14, 26))  # Restaura Pac-Man
+        for fantasma in self.fantasmas:
+            fantasma.reiniciar_posicion()
 
+        print("Después de reiniciar laberinto:")
+        print("Estado actual de laberinto:", self.laberinto)
+        print("Respaldo (laberinto_backup):", self.laberinto_backup)
 
     def agregar_elementos(self):
         """Agrega los Pacdots, Pildoras de Poder al sistema basado en el laberinto. Los fantasmas se crean directamente."""
@@ -325,7 +343,7 @@ class Laberinto:
                 # Configurar la fuente para mostrar el puntaje y las vidas
                 font = pygame.font.SysFont(None, 30)
 
-                while running and not menu_active:  # Añadir `not menu_active` para poder salir al menú
+                while running and not menu_active:  # Añadir not menu_active para poder salir al menú
                     delta_time = clock.tick(40) / 1000.0  # Tiempo en segundos
 
                     for event in pygame.event.get():
@@ -366,19 +384,23 @@ class Laberinto:
                             self.elementos.verificar_colisiones(self.pacman, self)
                             for fantasma in self.fantasmas:
                                 self.pacman.colision_fantasma(fantasma)
-                                # Verificar si Pac-Man ha perdido todas sus vidas
-                                if self.pacman.get_vidas() <= 0:
-                                    print("Pac-Man ha perdido todas sus vidas.")
-                                    menu_active = True  # Regresar al menú principal
-                                    juego_empezado = False
-                                    direccion_actual = None
-                                    self.pacman.set_vidas(3)
-                                    self.pacman.set_punto(0)
-                                    if fruta_creada:
-                                     self.elementos.eliminar_elemento(fruta.get_key())
-                                    break  # Salir del ciclo para mostrar el menú
 
-                            if self.verificar_nivel_completado():
+
+                                vidas_restantes = self.pacman.get_vidas()
+                                if vidas_restantes <= 0:
+                                    if vidas_restantes > 0:
+                                        self.reiniciar_laberinto2()
+                                    else:
+                                        menu_active = True
+                                        juego_empezado = False
+                                        direccion_actual = None
+                                        self.pacman.set_vidas(3)
+                                        self.pacman.set_punto(0)  # Mantener puntaje acumulado
+                                        if fruta_creada:
+                                            self.elementos.eliminar_elemento(fruta.get_key())
+                                        break
+
+                        if self.verificar_nivel_completado():
                                 self.avanzar_nivel()
                                 self.pacman.set_posicion(Posicion(14, 26))
                                 fruta_creada = False
