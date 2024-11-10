@@ -98,6 +98,8 @@ class Fantasma (ABC):
     def reiniciar_posicion(self):
         """Restablece la posición del fantasma a su posición inicial."""
         self.posicion_inicial = copy.deepcopy(self.posicion_aux)
+        self.modo = self.MODO_PERSECUCION
+
 
 
     def mover_aleatoriamente(self, grafo, delta_time):

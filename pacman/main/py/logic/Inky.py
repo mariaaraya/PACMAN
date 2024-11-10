@@ -21,7 +21,9 @@ class Inky(Fantasma):
 
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
-            if self.first_move_to_target:
+            if round(self.posicion_inicial.get_x()) == self.posicion_aux.get_x() and round(self.posicion_inicial.get_y()) == self.posicion_aux.get_y():
+                self.first_move_to_target = True
+            if self.first_move_to_target  :
                 objetivo_x, objetivo_y = 13, 14
                 objetivo = Posicion(objetivo_x, objetivo_y)
 

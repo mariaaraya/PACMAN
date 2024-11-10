@@ -62,8 +62,10 @@ class SistemaHashing:
         """Obtiene un elemento específico por su clave (posición)."""
         return self.elementos.get(key, None)
 
-    def obtener_elemento(self, key):
-        return self.elementos.get(key, None)
+
+    def vaciar(self):
+        """Elimina todos los elementos en el sistema de hashing."""
+        self.elementos.clear()
 
     def obtener_todos_los_elementos(self):
         return list(self.elementos.values())

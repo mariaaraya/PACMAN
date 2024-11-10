@@ -85,14 +85,10 @@ class Pacman:
             if self.modo == MODO_NORMAL or fantasma.modo == MODO_PERSECUCION:
                 self.vidas -= 1
                 self.punto = 0
-                self.laberinto.reiniciar_laberinto()
+                self.laberinto.posion_original()
             else:
                 self.punto+=200
                 fantasma.colision_Pacman()
-
-
-
-
 
 
     def mover(self, direccion, delta_time):

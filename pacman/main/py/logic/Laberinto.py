@@ -144,22 +144,19 @@ class Laberinto:
             return random.choice(posiciones_validas)  # Devolver una posición aleatoria
         return None
 
-    """def reiniciar_laberinto(self):
-        Reinicia el laberinto para el siguiente nivel.
-        # Eliminar cualquier fruta existente
-        frutas = [elemento for elemento in self.elementos.obtener_todos_los_elementos() if isinstance(elemento, Fruta)]
-        for fruta in frutas:
-            self.elementos.eliminar_elemento(fruta.get_key())  # Eliminar la fruta del sistema de hashing
+    def reiniciar_laberinto(self):
+        self.elementos.vaciar()
+        self.imprimir_elementos_restantes()
         self.pacman.set_posicion(Posicion(14, 26))
         self.laberinto = copy.deepcopy(self.laberinto_original)  # Reiniciar el laberinto con una copia profunda
-        self.agregar_elementos()  # Reagregar los elementos del laberinto"""
-
-    def reiniciar_laberinto(self):
-        """Reinicia el laberinto para un nuevo nivel."""
-        self.laberinto = copy.deepcopy(self.laberinto_original)  # Estado inicial del nuevo nivel
-        self.laberinto_backup = copy.deepcopy(self.laberinto)  # Actualizamos la copia de respaldo
-        self.pacman.set_posicion(Posicion(14, 26))  # Posición inicial de Pac-Man
         self.agregar_elementos()  # Reagregar los elementos del laberinto
+
+    def posion_original(self):
+         self.pacman.set_posicion(Posicion(14, 26))
+         self.agregar_elementos()  # Reagregar los elementos del laberinto
+         for fantasma in self.fantasmas:
+           fantasma.reiniciar_posicion()
+
 
     def imprimir_elementos_restantes(self):
         """Imprime los elementos restantes en el sistema de hashing para debug."""
@@ -200,22 +197,11 @@ class Laberinto:
         # Cambiar el valor de la matriz a 1
         self.laberinto[y][x] = 1
 
-    def reiniciar_laberinto2(self):
-        print("Antes de reiniciar laberinto:")
-        print("Estado actual de laberinto:", self.laberinto)
-        print("Respaldo (laberinto_backup):", self.laberinto_backup)
-        """Restaura el laberinto al estado guardado en laberinto_backup."""
-        self.laberinto = copy.deepcopy(self.laberinto_backup)
-        self.pacman.set_posicion(Posicion(14, 26))  # Restaura Pac-Man
-        for fantasma in self.fantasmas:
-            fantasma.reiniciar_posicion()
-
-        print("Después de reiniciar laberinto:")
-        print("Estado actual de laberinto:", self.laberinto)
-        print("Respaldo (laberinto_backup):", self.laberinto_backup)
 
     def agregar_elementos(self):
         """Agrega los Pacdots, Pildoras de Poder al sistema basado en el laberinto. Los fantasmas se crean directamente."""
+        # Limpiar lista de fantasmas y otros elementos visuales
+        self.fantasmas = []  # Lista para almacenar los fantasmas
         # Inicializamos las variables que controlan si los fantasmas ya han sido agregados
         blinky_added = False
         clyde_added = False
@@ -228,7 +214,6 @@ class Laberinto:
             for col in range(len(self.laberinto[row])):
                 cell_value = self.laberinto[row][col]
                 x = col * self.square_size + self.square_size // 2  # Centrar los objetos en la celda
-
                 y = row * self.square_size + self.square_size // 2
                 if cell_value == 1:  # Atajos
                     if col == 0:  # Es el atajo de la izquierda
@@ -246,16 +231,18 @@ class Laberinto:
                 elif cell_value == 4:  # Fantasmas
                     # Agregar cada fantasma solo si no ha sido agregado ya
                     if not blinky_added:
-                        self.fantasmas.append(Blinky(Posicion(col, row), self.square_size,4))
+                        #self.fantasmas.append(Blinky(Posicion(col, row), self.square_size,4))
                         blinky_added = True
                     elif not clyde_added:
-                        self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 4,4))
+                        #self.fantasmas.append(Clyde(Posicion(col, row), self.square_size, 4,4))
                         clyde_added = True
                     elif not inky_added:
-                        self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 4, self.blinky))
+
+                        #self.fantasmas.append(Inky(Posicion(col, row), self.square_size, 4, self.blinky))
+
                         inky_added = True
                     elif not pinky_added:
-                        self.fantasmas.append(Pinky(Posicion(col, row), self.square_size, 4))
+                        #self.fantasmas.append(Pinky(Posicion(col, row), self.square_size, 4))
                         pinky_added = True
 
     def draw(self):
@@ -384,20 +371,14 @@ class Laberinto:
                             self.elementos.verificar_colisiones(self.pacman, self)
                             for fantasma in self.fantasmas:
                                 self.pacman.colision_fantasma(fantasma)
-
-
                                 vidas_restantes = self.pacman.get_vidas()
-                                if vidas_restantes <= 0:
-                                    if vidas_restantes > 0:
-                                        self.reiniciar_laberinto2()
-                                    else:
+                                if vidas_restantes == 0:
                                         menu_active = True
                                         juego_empezado = False
                                         direccion_actual = None
                                         self.pacman.set_vidas(3)
                                         self.pacman.set_punto(0)  # Mantener puntaje acumulado
-                                        if fruta_creada:
-                                            self.elementos.eliminar_elemento(fruta.get_key())
+                                        self.reiniciar_laberinto()
                                         break
 
                         if self.verificar_nivel_completado():
