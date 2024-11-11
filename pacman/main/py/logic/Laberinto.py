@@ -1,7 +1,7 @@
 import os
 import copy
 import threading
-
+import pickle
 import pygame
 import random
 from pacman.main.py.logic.AtajoLaberinto import AtajoLaberinto
@@ -245,6 +245,48 @@ class Laberinto:
                         self.fantasmas.append(Pinky(Posicion(col, row), self.square_size, 4))
                         pinky_added = True
 
+    def guardar_estado(self):
+        """Función para guardar el estado actual del juego."""
+        # Guardamos el estado del juego en un archivo
+        estado = {
+            'nivel': self.nivel,
+            'puntaje': self.pacman.get_punto(),
+            'vidas': self.pacman.get_vidas(),
+            'posicion_pacman': self.pacman.get_posicion(),
+            'fantasmas': [fantasma.get_posicion() for fantasma in self.fantasmas],
+            'tiempo_inicio_juego': pygame.time.get_ticks(),
+        }
+
+        # Guardar el estado en un archivo usando pickle
+        with open('estado_juego.pickle', 'wb') as archivo:
+            pickle.dump(estado, archivo)
+        print("Estado del juego guardado.")
+
+    def cargar_estado(self):
+        """Función para cargar el estado del juego desde el archivo."""
+        try:
+            with open('estado_juego.pickle', 'rb') as archivo:
+                estado = pickle.load(archivo)
+                print("Estado del juego cargado.")
+
+                # Restaurar los valores del estado
+                self.nivel = estado['nivel']
+                self.pacman.set_punto(estado['puntaje'])
+                self.pacman.set_vidas(estado['vidas'])
+                self.pacman.set_posicion(estado['posicion_pacman'])
+
+                # Restaurar la posición de los fantasmas
+                for i, fantasma in enumerate(self.fantasmas):
+                    fantasma.set_posicion(estado['fantasmas'][i])
+
+                # Si hay más datos del estado (como el tiempo), puedes restaurarlos aquí también
+                tiempo_inicio_juego = estado['tiempo_inicio_juego']
+
+        except FileNotFoundError:
+            print("No se encontró un archivo guardado.")
+            # Si no existe un archivo guardado, se puede iniciar un nuevo juego
+            pass
+
     def draw(self):
         # Colores para los diferentes elementos del laberinto
         color_wall = (0, 0, 255)  # Azul para las paredes
@@ -311,7 +353,8 @@ class Laberinto:
                         juego_empezado = True
                     elif option_selected == "Cargar Juego":
                         print("Cargar juego seleccionado")
-                        # Lógica de carga...
+                        self.cargar_estado()  # Cargar el estado guardado
+                        menu_active = False  # Iniciar el juego con el estado cargado
 
             if menu_active:
                 self.screen.fill((0, 0, 0))  # Limpiar pantalla
@@ -335,6 +378,7 @@ class Laberinto:
 
                     for event in pygame.event.get():
                         if event.type == pygame.QUIT:
+                            self.guardar_estado()  # Guardar el estado antes de cerrar
                             running = False
                         if event.type == pygame.KEYDOWN:
                             if not juego_empezado:  # Si el juego no ha empezado, cualquier tecla lo inicia
@@ -377,7 +421,6 @@ class Laberinto:
                                         juego_empezado = False
                                         direccion_actual = None
                                         self.pacman.set_vidas(3)
-                                        self.pacman.set_punto(0)  # Mantener puntaje acumulado
                                         self.reiniciar_laberinto()
                                         break
 
@@ -389,7 +432,6 @@ class Laberinto:
                                     print("Juego completado. Volviendo al menú principal.")
                                     menu_active = True
                                     self.pacman.set_vidas(3)
-                                    self.pacman.set_punto(0)
 
                                     juego_empezado = False
                                     direccion_actual = None
@@ -406,124 +448,3 @@ class Laberinto:
                     self.draw()  # Dibujar el laberinto y los elementos
                     pygame.display.update()  # Actualizar la pantalla
 
-    """def run(self):
-        pygame.init()
-        clock = pygame.time.Clock()
-        # Crear el menú de inicio con la imagen de fondo
-        background_path = os.path.join(SpriteSheets , "GameBoardSheet.png")
-        menu = Menu(self.screen, background_path)
-        running = True
-        menu_active = True  # El menú está activo al inicio
-
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-
-                if menu_active:
-                    option_selected = menu.handle_event(event)
-                    if option_selected == "Iniciar Juego":
-                        menu_active = False  # Dejar de mostrar el menú y empezar el juego
-                        juego_empezado = True
-                    elif option_selected == "Cargar Juego":
-                        # Implementar la lógica para cargar el juego aquí
-                        print("Cargar juego seleccionado")
-                        # Lógica de carga...
-
-            if menu_active:
-                self.screen.fill((0, 0, 0))  # Limpiar pantalla
-                menu.draw()  # Dibujar el menú
-                pygame.display.update()
-            else:
-                self.agregar_elementos()  # Agregar los elementos al iniciar
-                running = True
-                direccion_actual = None  # Variable para almacenar la dirección actual
-                fruta_creada = False  # Controlar si ya se creó una fruta en este nivel
-                juego_empezado = False  # Variable para indicar si el juego ha comenzado
-                tiempo_inicio_juego = 0  # Variable para almacenar el tiempo de inicio
-
-                # Configurar el temporizador para crear la fruta después de 5 segundos
-                pygame.time.set_timer(pygame.USEREVENT + 1, 5000)
-
-                # Configurar la fuente para mostrar el puntaje y las vidas
-                font = pygame.font.SysFont(None, 30)
-
-                while running:
-                        delta_time = clock.tick(40) / 1000.0  # Tiempo en segundos
-
-                        for event in pygame.event.get():
-                            if event.type == pygame.QUIT:
-                                running = False
-                            if event.type == pygame.KEYDOWN:
-                                if not juego_empezado:  # Si el juego no ha empezado, cualquier tecla lo inicia
-                                    juego_empezado = True
-                                    tiempo_inicio_juego = pygame.time.get_ticks()  # Registrar el tiempo de inicio
-                                else:
-                                    if event.key == pygame.K_RIGHT:
-                                        direccion_actual = "derecha"
-                                    elif event.key == pygame.K_LEFT:
-                                        direccion_actual = "izquierda"
-                                    elif event.key == pygame.K_UP:
-                                        direccion_actual = "arriba"
-                                    elif event.key == pygame.K_DOWN:
-                                        direccion_actual = "abajo"
-
-                            # Evento personalizado para crear la fruta
-                            if event.type == pygame.USEREVENT + 1 and not fruta_creada:
-                                if self.nivel in [1, 2, 3]:  # Controla la aparición de la fruta en niveles 1, 2 y 3
-                                    posicion_fruta = self.generar_posicion_fruta()
-                                    if posicion_fruta:
-                                        # Crear una fruta basada en el nivel actual y actualizar la matriz
-                                        fruta = self.crear_fruta_segun_nivel(self.nivel, posicion_fruta)
-                                        self.elementos.agregar_elemento(fruta)  # Agregar la fruta al SistemaHashing
-                                        fruta_creada = True  # Marcar que ya se creó la fruta en este nivel
-
-
-                        if juego_empezado:
-                            tiempo_actual = pygame.time.get_ticks()
-                            if tiempo_actual - tiempo_inicio_juego > 2000:  # Esperar 2 segundos antes de que el juego comience a moverse
-                                if direccion_actual:
-                                    self.pacman.mover(direccion_actual, delta_time)
-
-                                for fantasma in self.fantasmas:
-                                    fantasma.mover(self.pacman.get_posicion(), self.grafo, delta_time)
-
-
-                                self.elementos.verificar_colisiones(self.pacman, self)
-                                # Verificar colisión entre Pac-Man y cada fantasma
-                                for fantasma in self.fantasmas:
-                                    self.pacman.colision_fantasma(fantasma)
-                                    # Verificar si Pac-Man ha perdido todas sus vidas
-                                    if self.pacman.get_vidas() <= 0:
-                                        print("Pac-Man ha perdido todas sus vidas.")
-                                        menu_active = True  # Regresar al menú principal
-                                        juego_empezado = False
-                                        direccion_actual = None
-                                        break  # Salir del ciclo para mostrar el menú
-
-                                if self.verificar_nivel_completado():
-                                    self.avanzar_nivel()
-                                    self.pacman.set_posicion(Posicion(14, 26))  # Restaurar la posición inicial de Pac-Man
-                                    fruta_creada = False  # Resetear la variable para que la fruta pueda crearse en el siguiente nivel
-                                    # Verificar si se ha completado el juego
-                                    if self.nivel > self.max_nivel:
-                                        print("Juego completado. Volviendo al menú principal.")
-                                        menu_active = True
-                                        juego_empezado = False
-                                        direccion_actual = None
-                                        break
-
-                        self.screen.fill((0, 0, 0))  # Limpiar pantalla
-
-                        # Dibujar el puntaje en la parte superior de la pantalla
-                        puntaje_text = font.render(f"Puntaje: {self.pacman.get_punto()}", True, (255, 255, 255))
-                        self.screen.blit(puntaje_text, (10, 10))
-
-                        # Dibujar las vidas en la parte inferior de la pantalla
-                        vidas_text = font.render(f"Vidas: {self.pacman.get_vidas()}", True, (255, 255, 255))
-                        self.screen.blit(vidas_text, (10, self.height - 30))
-
-                        self.draw()  # Dibujar el laberinto y los elementos
-                        pygame.display.update()  # Actualizar la pantalla
-                        # 
-                        """

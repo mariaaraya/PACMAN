@@ -119,7 +119,12 @@ class Inky(Fantasma):
             else:
                 print("Error: Blinky no está correctamente inicializado.")
 
-
+    def set_posicion(self, nueva_posicion):
+        """
+        Este método establece la nueva posición de Blinky.
+        :param nueva_posicion: Un objeto que contiene las nuevas coordenadas.
+        """
+        self.posicion_inicial = nueva_posicion
 
     def draw_persecucion(self, screen):
         # Selecciona las imágenes de movimiento según la dirección
