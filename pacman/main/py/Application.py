@@ -14,7 +14,7 @@ if __name__ == "__main__":
     # Creadoras:
     Alexia Alvarado Alfaro
     Kendra Artavia Caballero
-    Maria Aroyo Campos  
+    María Araya Campos  
 
     # Controles Básicos:
     
