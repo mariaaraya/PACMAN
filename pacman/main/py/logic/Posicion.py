@@ -5,7 +5,6 @@ class Posicion:
         self._y = y  # Coordenada en el eje Y
         self._direccion = direccion  # Dirección de movimiento
 
-
     # Getters
     def get_x(self):
         return self._x
@@ -16,7 +15,6 @@ class Posicion:
     def get_direccion(self):
         return self._direccion
 
-
     # Setters
     def set_x(self, x):
         self._x = x
@@ -26,7 +24,6 @@ class Posicion:
 
     def set_direccion(self, direccion):
         self._direccion = direccion
-
 
 
     def __str__(self):

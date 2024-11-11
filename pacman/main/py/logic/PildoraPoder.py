@@ -1,13 +1,11 @@
 import pygame
 from .ElementoJuego import ElementoJuego
 
-
 class PildoraPoder(ElementoJuego):
     def __init__(self, posicion, nombre, duracion):
         super().__init__(posicion,  nombre , duracion, 50)  # Llama al constructor de la clase padre
 
     def colisionar(self, pacman):
-        """Lógica específica para la colisión del Pacdot"""
         # Convertir la posición de Pac-Man a píxeles
         pacman_x = pacman.get_posicion().get_x() * pacman.square_size
         pacman_y = pacman.get_posicion().get_y() * pacman.square_size
@@ -32,5 +30,4 @@ class PildoraPoder(ElementoJuego):
         # Tamaño del Pacdot (radio del círculo)
         radio = 7 # Ajusta el tamaño
         # Dibuja un círculo en la pantalla en la posición del Pacdot
-        pygame.draw.circle(screen, color,
-                           (self.posicion.get_x(), self.posicion.get_y()), radio)
+        pygame.draw.circle(screen, color,(self.posicion.get_x(), self.posicion.get_y()), radio)

@@ -4,7 +4,6 @@ class Data:
     def __init__(self):
         self.elementos = SistemaHashing()  # Crear una nueva instancia de SistemaHashing
 
-
     # Getters
     def get_Elementos(self):
         return self.elementos
@@ -12,3 +11,5 @@ class Data:
     # Setters
     def set_Elementos(self, elementos):
         self.elementos = elementos
+
+"""clase de gestión de datos que encapsula una instancia de SistemaHashing"""

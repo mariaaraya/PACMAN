@@ -9,7 +9,7 @@ class Grafo:
 
     def agregar_arista(self, desde, hasta):
         if desde in self.vertices and hasta in self.vertices:
-            self.vertices[desde].append(hasta)  # Cambié 'todestino' a 'hasta'
+            self.vertices[desde].append(hasta)
             self.vertices[hasta].append(desde)
 
     def crear_grafo_laberinto(self):

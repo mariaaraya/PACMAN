@@ -1,7 +1,6 @@
 import pygame
 import os
 
-
 class Menu:
     def __init__(self, screen, background_image_path):
         self.screen = screen
@@ -30,10 +29,18 @@ class Menu:
             y = (self.screen.get_height() // 2) + i * 60  # Espacio entre las opciones
             self.screen.blit(text_surface, (x, y))
 
-        # Dibujar el mensaje de cierre debajo de "Cargar Juego"
+        # Dibujar el mensaje de cierre con borde
         message_text = self.small_font.render("Cerrar con X para guardar la partida", True, (200, 200, 200))
         message_x = (self.screen.get_width() - message_text.get_width()) // 2
         message_y = (self.screen.get_height() // 2) + len(self.options) * 60 + 20  # Debajo de las opciones
+
+        # Añadir borde para resaltar
+        border_offset = 2  # Desplazamiento del borde
+        border_color = (255, 0, 0)  # Color del borde (rojo en este caso)
+
+        # Dibujar borde alrededor del texto
+        self.screen.blit(self.small_font.render("Cerrar con X para guardar la partida", True, border_color),
+                         (message_x - border_offset, message_y - border_offset))
         self.screen.blit(message_text, (message_x, message_y))
 
     def handle_event(self, event):

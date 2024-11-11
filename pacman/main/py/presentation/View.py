@@ -52,7 +52,3 @@ class View:
                 elif self.model.laberinto[row][col] == 2:  # Dibujar caminos
                     pygame.draw.rect(self.screen, (0, 0, 0),
                                      (col * self.square, row * self.square, self.square, self.square))
-
-
-
-

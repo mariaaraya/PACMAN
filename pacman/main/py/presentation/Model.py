@@ -18,7 +18,6 @@ class Model:
         self.notify_observers("elementos_changed")
 
     def update(self):
-        # Lógica para actualizar los datos del juego
         pass
 
     def __init__(self):

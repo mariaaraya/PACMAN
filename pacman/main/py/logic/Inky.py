@@ -19,7 +19,6 @@ class Inky(Fantasma):
 
 
 
-
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
             if round(self.posicion_inicial.get_x()) == self.posicion_aux.get_x() and round(self.posicion_inicial.get_y()) == self.posicion_aux.get_y():
                 self.first_move_to_target = True
@@ -120,10 +119,7 @@ class Inky(Fantasma):
                 print("Error: Blinky no está correctamente inicializado.")
 
     def set_posicion(self, nueva_posicion):
-        """
-        Este método establece la nueva posición de Blinky.
-        :param nueva_posicion: Un objeto que contiene las nuevas coordenadas.
-        """
+        # Este método establece la nueva posición de Inky.
         self.posicion_inicial = nueva_posicion
 
     def draw_persecucion(self, screen):

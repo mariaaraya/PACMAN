@@ -2,7 +2,6 @@
 from pacman.main.py.logic.AtajoLaberinto import AtajoLaberinto
 from pacman.main.py.logic.Fruta import Fruta
 
-
 class SistemaHashing:
     def __init__(self):
         self.elementos = {}

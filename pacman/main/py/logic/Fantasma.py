@@ -59,7 +59,6 @@ class Fantasma (ABC):
                            (round(self.posicion_aux.get_x()), round(self.posicion_aux.get_y())))
         # Imprime el camino completo para depuración
 
-
         movimiento = self.velocidad * delta_time
 
         # Verifica si hay un camino y un siguiente paso
@@ -100,10 +99,7 @@ class Fantasma (ABC):
         self.posicion_inicial = copy.deepcopy(self.posicion_aux)
         self.modo = self.MODO_PERSECUCION
 
-
-
     def mover_aleatoriamente(self, grafo, delta_time):
-
 
         if not self.objetivo_aleatorio or (
                     round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())) == (
@@ -169,7 +165,6 @@ class Fantasma (ABC):
             self.draw_dispersion(screen)
         elif self.modo == self.MODO_ASUSTADO:
             self.draw_asustado(screen)
-
 
 
     def draw_persecucion(self, screen):

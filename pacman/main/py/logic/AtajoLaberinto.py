@@ -9,7 +9,6 @@ class AtajoLaberinto(ElementoJuego):
         super().__init__(posicion, nombre , -1,0)  # Llama al constructor de la clase padre
 
     def colisionar(self, pacman):
-        """Lógica específica para la colisión del atajo."""
         tiempo_actual = pygame.time.get_ticks()
 
         # Verificar si Pac-Man ha sido teletransportado recientemente
@@ -42,3 +41,6 @@ class AtajoLaberinto(ElementoJuego):
             return True
         return False
 
+"""representación de un atajo en el laberinto en el juego de Pacman.
+ Los atajos permiten a Pacman teletransportarse entre dos puntos del laberinto, 
+ y esta clase se encarga de gestionar esa mecánica."""

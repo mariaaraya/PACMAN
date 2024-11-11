@@ -1,6 +1,5 @@
 from ..data.Data import Data
 
-
 class Service:
     _instance = None
 
@@ -16,8 +15,6 @@ class Service:
         else:
             #Falta hacer lo metodo o clase para cargar el PACMAN
             self.data = Data()
-
-
 
     # Sistema Hashing
     def agregar_elemento(self, elemento):

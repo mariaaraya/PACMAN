@@ -1,6 +1,5 @@
 import os
 import random
-
 import pygame
 
 from pacman.main.py.logic.Fantasma import Fantasma
@@ -18,12 +17,10 @@ class Blinky(Fantasma):
         self.velocidad=velocidad
 
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
-
         # Obtén el camino hacia Pac-Man usando BFS
         camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
                                (round(pacman_posicion.get_x()), round(pacman_posicion.get_y())))
         # Imprime el camino completo para depuración
-
 
         movimiento = self.velocidad * delta_time
 
@@ -51,10 +48,7 @@ class Blinky(Fantasma):
             #self.posicion_inicial.set_y(self.objetivo[1])
 
     def set_posicion(self, nueva_posicion):
-        """
-        Este método establece la nueva posición de Blinky.
-        :param nueva_posicion: Un objeto que contiene las nuevas coordenadas.
-        """
+        # Este método establece la nueva posición de Blinky
         self.posicion_inicial = nueva_posicion
 
     def draw_persecucion(self, screen):

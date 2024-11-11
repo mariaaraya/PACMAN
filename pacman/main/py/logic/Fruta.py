@@ -13,7 +13,6 @@ class Fruta(ElementoJuego):
         self.square_size = square_size  # Añadir el atributo square_size
 
     def colisionar(self, pacman):
-        """Lógica específica para la colisión del Pacdot o Fruta"""
         # Obtener la posición de Pac-Man en la cuadrícula
         pacman_x = pacman.get_posicion().get_x()  # Coordenada X en la cuadrícula
         pacman_y = pacman.get_posicion().get_y()  # Coordenada Y en la cuadrícula

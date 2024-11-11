@@ -19,9 +19,6 @@ class Pinky(Fantasma):
         self.velocidad=velocidad
         self.first_move_to_target = True
 
-
-
-
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
 
             # Calcular el objetivo adelantado en la dirección de Pac-Man
@@ -70,13 +67,8 @@ class Pinky(Fantasma):
                     self.posicion_inicial.set_y(self.posicion_inicial.get_y() + desplazamiento)
                     self._direccion = "abajo" if distancia_y > 0 else "arriba"
 
-
-
     def set_posicion(self, nueva_posicion):
-        """
-        Este método establece la nueva posición de Blinky.
-        :param nueva_posicion: Un objeto que contiene las nuevas coordenadas.
-        """
+        # Este método establece la nueva posición de Pinky.
         self.posicion_inicial = nueva_posicion
 
     def draw_persecucion(self, screen):

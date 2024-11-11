@@ -1,6 +1,4 @@
 import os
-import random
-
 import pygame
 
 from pacman.main.py.logic.Fantasma import Fantasma
@@ -29,7 +27,6 @@ class Clyde(Fantasma):
         dx = pacman_posicion.get_x() - self.posicion_inicial.get_x()
         dy = pacman_posicion.get_y() - self.posicion_inicial.get_y()
         distancia_a_pacman = (dx ** 2 + dy ** 2) ** 0.5
-
 
         # Cambia el estado según la distancia a Pac-Man y el contador de frames
         self.contador_frames += 1
@@ -73,8 +70,6 @@ class Clyde(Fantasma):
             self.objetivo_aleatorio = self.generar_posicion_aleatoria(grafo)
 
 
-
-
     def camino_valido(self, grafo, objetivo):
         """Verifica si hay un camino válido hacia el objetivo."""
         camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
@@ -82,10 +77,7 @@ class Clyde(Fantasma):
         return len(camino) > 1
 
     def set_posicion(self, nueva_posicion):
-        """
-        Este método establece la nueva posición de Blinky.
-        :param nueva_posicion: Un objeto que contiene las nuevas coordenadas.
-        """
+        # Este método establece la nueva posición de Clyde.
         self.posicion_inicial = nueva_posicion
 
     def draw_persecucion(self, screen):
