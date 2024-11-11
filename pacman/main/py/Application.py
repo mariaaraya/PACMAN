@@ -11,6 +11,9 @@ if __name__ == "__main__":
     """# PACMAN
     Este proyecto del curso Estructuras de Datos consiste en desarrollar el juego PAC-MAN en Python.
     
+    #Enlace del repositorio en GitHub
+    https://github.com/mariaaraya/PACMAN
+    
     # Creadoras:
     Alexia Alvarado Alfaro
     Kendra Artavia Caballero
