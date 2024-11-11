@@ -246,8 +246,7 @@ class Laberinto:
                         pinky_added = True
 
     def guardar_estado(self):
-        """Función para guardar el estado actual del juego."""
-        # Guardamos el estado del juego en un archivo
+        """Función para guardar el estado actual del juego, incluyendo el laberinto y elementos recolectados."""
         estado = {
             'nivel': self.nivel,
             'puntaje': self.pacman.get_punto(),
@@ -255,6 +254,7 @@ class Laberinto:
             'posicion_pacman': self.pacman.get_posicion(),
             'fantasmas': [fantasma.get_posicion() for fantasma in self.fantasmas],
             'tiempo_inicio_juego': pygame.time.get_ticks(),
+            'laberinto': copy.deepcopy(self.laberinto)  # Guardar el laberinto actual
         }
 
         # Guardar el estado en un archivo usando pickle
@@ -263,7 +263,7 @@ class Laberinto:
         print("Estado del juego guardado.")
 
     def cargar_estado(self):
-        """Función para cargar el estado del juego desde el archivo."""
+        """Función para cargar el estado del juego desde el archivo, incluyendo el laberinto."""
         try:
             with open('estado_juego.pickle', 'rb') as archivo:
                 estado = pickle.load(archivo)
@@ -274,18 +274,18 @@ class Laberinto:
                 self.pacman.set_punto(estado['puntaje'])
                 self.pacman.set_vidas(estado['vidas'])
                 self.pacman.set_posicion(estado['posicion_pacman'])
+                self.laberinto = estado['laberinto']  # Restaurar el laberinto guardado
 
                 # Restaurar la posición de los fantasmas
                 for i, fantasma in enumerate(self.fantasmas):
                     fantasma.set_posicion(estado['fantasmas'][i])
 
-                # Si hay más datos del estado (como el tiempo), puedes restaurarlos aquí también
-                tiempo_inicio_juego = estado['tiempo_inicio_juego']
+                # Limpiar elementos y agregar nuevos de acuerdo con el laberinto cargado
+                self.elementos.vaciar()  # Limpia los elementos actuales
+                self.agregar_elementos()  # Reconstruye los elementos en base al laberinto cargado
 
         except FileNotFoundError:
-            print("No se encontró un archivo guardado.")
-            # Si no existe un archivo guardado, se puede iniciar un nuevo juego
-            pass
+            print("No se encontró un archivo guardado. Iniciando un nuevo juego.")
 
     def draw(self):
         # Colores para los diferentes elementos del laberinto
@@ -444,6 +444,10 @@ class Laberinto:
 
                     vidas_text = font.render(f"Vidas: {self.pacman.get_vidas()}", True, (255, 255, 255))
                     self.screen.blit(vidas_text, (10, self.height - 30))
+
+                    nivel_text = font.render(f"Nivel: {self.nivel}", True, (255, 255, 255))
+                    nivel_x = self.width - nivel_text.get_width() - 10  # Ajustar a la derecha
+                    self.screen.blit(nivel_text, (nivel_x, 10))
 
                     self.draw()  # Dibujar el laberinto y los elementos
                     pygame.display.update()  # Actualizar la pantalla
