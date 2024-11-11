@@ -4,7 +4,7 @@ Este proyecto del curso Estructuras de Datos consiste en desarrollar el juego PA
 # Creadoras:
     Alexia Alvarado Alfaro
     Kendra Artavia Caballero
-    Maria Aroyo Campos 
+    Maria Araya Campos 
 
 # Controles Básicos:
 Iniciar Juego:
