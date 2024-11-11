@@ -52,3 +52,8 @@ class Menu:
             elif event.key == pygame.K_RETURN:
                 return self.options[self.selected_option]  # Devolver la opción seleccionada
         return None
+
+    """Este código de menú fue diseñado con la ayuda de chatgpt. 
+    Aprendimos a crear una interfaz gráfica básica con pygame, específicamente a manejar opciones de menú, 
+    dibujar texto, y cambiar colores dinámicamente. Anteriormente, no teníamos experiencia con este tipo de interfaz
+     gráfica en Python, por lo que fue un nuevo aprendizaje importante."""

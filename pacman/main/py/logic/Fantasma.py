@@ -85,6 +85,12 @@ class Fantasma (ABC):
             self.posicion_inicial.set_y(self.objetivo[1])
             self.first_move_to_target = True
 
+    """El método tiene dos modos: MODO_DISPERSION y MODO_PERSECUCION. La función mueve al personaje hacia una posición 
+    objetivo en el grafo, ajustando su posición según la dirección más adecuada y utilizando un algoritmo de búsqueda 
+    como BFS (Breadth-First Search) para encontrar el camino. Chatgpt nos ayudó a crear este método al sugerir una 
+    estructura lógica para el movimiento de un personaje en función de su modo de comportamiento y su objetivo en el 
+    juego. Nos ayudo con algoritmos de búsqueda (como BFS) para determinar el mejor camino, 
+    el cálculo de la distancia y la velocidad, y cómo ajustar la dirección de movimiento del personaje según la situación."""
 
     def mover(self, pacman_posicion , grafo, delta_time):
         if self.modo == self.MODO_PERSECUCION:
@@ -137,6 +143,13 @@ class Fantasma (ABC):
         # Si no hay un camino válido, generar una nueva posición aleatoria
         else:
             self.objetivo_aleatorio = self.generar_posicion_aleatoria(grafo)
+
+            """El método mueve los fantasmas de manera aleatoria dentro del laberinto, utilizando el algoritmo BFS
+             para encontrar un camino hacia una posición objetivo aleatoria en el grafo del laberinto. 
+             Cuando el objetivo se alcanza o no hay camino, se genera una nueva posición aleatoria. Nuevamente
+             chatgpt nos ayudo con algoritmos de búsqueda (como BFS) para determinar un camino en el grafo, 
+             el cálculo del desplazamiento y la velocidad, posiciones y generar nuevos objetivos"""
+
 
     @staticmethod
     def generar_posicion_aleatoria(grafo):
@@ -230,5 +243,3 @@ class Fantasma (ABC):
 
         screen.blit(ghostImage, (self.posicion_inicial.get_x() * self.square_size,
                                  self.posicion_inicial.get_y() * self.square_size))
-
-

@@ -64,6 +64,7 @@ class Pacman:
         self.posicion.set_direccion("derecha")  # Ajusta la dirección si es necesario
         self.colision_desactivada = True  # Desactivar colisiones temporalmente
         self.tiempo_colision_desactivada = pygame.time.get_ticks()  # Guardar el tiempo actual
+        #Aqui nos apoyamos con chatgpt para mejorar el metodo que teniamos inicialmente, por eso el tiempo de colision desativada
 
     def colision_pildora(self, duracion):
         """Activa el modo asustado en el laberinto para los fantasmas durante la duración de la pildora."""
@@ -134,6 +135,7 @@ class Pacman:
         else:
             # Si la nueva posición está fuera de los límites, no hacer nada
             pass
+        #este metodo de mover, chatgpt nos ayudo en la guia, gracias a este pudimos basarnos para los fantasmas, con sus respectivos cambios de bfs
 
     def draw(self, screen):
         # Obtener la dirección actual
@@ -167,3 +169,4 @@ class Pacman:
         # Dibujar la imagen en la posición actual de Pac-Man
         screen.blit(pacmanImage, (self.posicion.get_x() * self.square_size ,
                                   self.posicion.get_y() * self.square_size ))
+    #con chatgpt logramos mejorar el dibujo de los personajes (sus imagenes respectivas), de aqui nos basamos para los siguientes personajes (los fantasmas)

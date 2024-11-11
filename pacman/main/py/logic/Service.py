@@ -26,3 +26,6 @@ class Service:
     def verificar_colisiones(self, pacman):
         return self.data.elementos.verificar_colisiones(pacman)
 
+"""La clase Service está diseñada como un Singleton que proporciona acceso a una única instancia 
+que maneja datos relacionados con el juego. Ofrece métodos para agregar, eliminar y verificar 
+colisiones con los elementos del juego (involucrando a Pac-Man y otros objetos)."""

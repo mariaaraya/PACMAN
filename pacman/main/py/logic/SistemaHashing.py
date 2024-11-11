@@ -74,3 +74,11 @@ class SistemaHashing:
         for key, elemento in self.elementos.items():
             print(
                 f"Clave: {key}, Nombre: {elemento.get_nombre()}, Posición: {elemento.get_posicion()}, Duración: {elemento.get_duracion()}")
+
+"""La clase SistemaHashing es responsable de almacenar y gestionar los elementos del juego 
+utilizando un diccionario para realizar búsquedas rápidas basadas en una clave 
+(probablemente la posición de los elementos o algún identificador único). 
+Permite agregar y eliminar elementos, verificar colisiones entre Pac-Man y estos elementos, 
+vaciar el sistema de almacenamiento y obtener información de los elementos almacenados. 
+La lógica de colisiones maneja diferentes tipos de elementos (como frutas y atajos de laberinto) 
+y realiza acciones correspondientes cuando Pac-Man interactúa con ellos."""

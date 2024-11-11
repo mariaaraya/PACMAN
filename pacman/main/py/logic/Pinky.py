@@ -67,6 +67,8 @@ class Pinky(Fantasma):
                     self.posicion_inicial.set_y(self.posicion_inicial.get_y() + desplazamiento)
                     self._direccion = "abajo" if distancia_y > 0 else "arriba"
 
+    # gracias al codigo de blinky y clyde, pudimos guiarnos en la parte del movimiento, pero nos apoyamos en chatgpt para adaptar sus nuevos movimientos, e incluso mejorar codigo viejo
+
     def set_posicion(self, nueva_posicion):
         # Este método establece la nueva posición de Pinky.
         self.posicion_inicial = nueva_posicion

@@ -43,9 +43,8 @@ class Blinky(Fantasma):
                     self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento))
                 self._direccion = "abajo" if distancia_y > 0 else "arriba"
 
-            # Mueve directamente al siguiente paso
-            #self.posicion_inicial.set_x(self.objetivo[0])
-            #self.posicion_inicial.set_y(self.objetivo[1])
+    #gracias al codigo de pacman, pudimos guiarnos en la parte del movimiento, y gracias a chatgpt logramos adaptarlo a los grafos bfs
+    #ya teniendo blinky funcional en su movimiento, nos ayuda a continuar con los otros fantasmas que tienen mas instrucciones de movimiento
 
     def set_posicion(self, nueva_posicion):
         # Este método establece la nueva posición de Blinky

@@ -420,7 +420,8 @@ class Laberinto:
                                         menu_active = True
                                         juego_empezado = False
                                         direccion_actual = None
-                                        self.pacman.set_vidas(3)
+                                        self.pacman.set_vidas(3)  # Resetear vidas a 3
+                                        self.pacman.set_punto(0)  # Reiniciar el puntaje a 0
                                         self.reiniciar_laberinto()
                                         break
 

@@ -113,10 +113,9 @@ class Inky(Fantasma):
                         nueva_y = self.posicion_inicial.get_y() + (movimiento if distancia_y > 0 else -movimiento)
                         self.posicion_inicial.set_y(round(nueva_y))  # Redondea la posición en y
                         self._direccion = "abajo" if distancia_y > 0 else "arriba"
-
-
             else:
                 print("Error: Blinky no está correctamente inicializado.")
+            # gracias al codigo de blinky y clyde, pudimos guiarnos en la parte del movimiento, pero nos apoyamos en chatgpt para adaptar sus nuevos movimientos, e incluso mejorar codigo viejo
 
     def set_posicion(self, nueva_posicion):
         # Este método establece la nueva posición de Inky.

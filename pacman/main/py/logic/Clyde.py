@@ -21,7 +21,6 @@ class Clyde(Fantasma):
         self.distancia_minima_alejamiento = 5  # Distancia mínima en la que Clyde comenzará a alejarse
 
 
-
     def mover_hacia_objetivo(self, pacman_posicion, grafo, delta_time):
         # Calcula la distancia entre Clyde y Pac-Man
         dx = pacman_posicion.get_x() - self.posicion_inicial.get_x()
@@ -69,7 +68,9 @@ class Clyde(Fantasma):
         elif self.estado_actual == "alejarse":
             self.objetivo_aleatorio = self.generar_posicion_aleatoria(grafo)
 
+    # gracias al codigo de blinky, pudimos guiarnos en la parte del movimiento, pero nos apoyamos en chatgpt para adaptar sus nuevos movimientos, e incluso mejorar codigo viejo
 
+    #se crean metodos extras que ayudan a las instrucciones del movimiento del fantasma
     def camino_valido(self, grafo, objetivo):
         """Verifica si hay un camino válido hacia el objetivo."""
         camino = grafo.bfs((round(self.posicion_inicial.get_x()), round(self.posicion_inicial.get_y())),
